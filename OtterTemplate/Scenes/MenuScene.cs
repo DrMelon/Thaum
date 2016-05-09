@@ -34,7 +34,7 @@ namespace Thaum.Scenes
         {
             // Load Music
             MenuMusic = new Music(Assets.MUSIC_MENU, true);
-            MenuMusic.Play();
+            //MenuMusic.Play();
 
             // Load BG
             DebugMenuImage = new Image(Assets.GFX_DEBUGMENU);

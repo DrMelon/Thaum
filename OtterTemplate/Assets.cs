@@ -26,6 +26,7 @@ namespace Thaum
 
         // Game
         public static string GFX_TERRAIN = ASSET_BASE_PATH + "Graphics/map/terrain1.png";
+        public static string GFX_PARTICLE_EXPLODE1 = ASSET_BASE_PATH + "Graphics/explode.png";
 
     }
 }

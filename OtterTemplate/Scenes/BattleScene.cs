@@ -28,13 +28,21 @@ namespace Thaum.Scenes
         public override void Update()
         {
 
-            if(Game.Session("Player1").GetController<ControllerXbox360>().B.Pressed)
+            if (Game.Session("Player1").GetController<ControllerXbox360>().B.Pressed)
             {
-                TheTerrain.MakeHole(new Vector2(150, 123), 200.0f);
+                Entities.Explosion newExplosion = new Entities.Explosion(TheTerrain, new Vector2(130, 125), 20);
+                Add(newExplosion);
             }
 
 
+
             base.Update();
+        }
+
+        public override void Render()
+        {
+            base.Render();
+
         }
     }
 }

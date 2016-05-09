@@ -101,7 +101,7 @@ namespace Thaum.Entities
             }
 
             // Normalize results
-            result.Normalize();
+            //result.Normalize();
 
 
 
