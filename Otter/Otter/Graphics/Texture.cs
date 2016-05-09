@@ -262,17 +262,19 @@ namespace Otter {
         /// <param name="y">The y coordinate of the pixel.</param>
         /// <param name="color">The Color to set the pixel to.</param>
         public void SetPixel(int x, int y, Color color) {
+            
             if (x < 0) throw new ArgumentException("X must be greater than 0.");
             if (y < 0) throw new ArgumentException("Y must be greater than 0.");
-            if (x > Width) throw new ArgumentException("X must be within the texture width.");
-            if (y > Height) throw new ArgumentException("Y must be within the texture width.");
+            if (x >= Width) throw new ArgumentException("X must be within the texture width.");
+            if (y >= Height) throw new ArgumentException("Y must be within the texture width.");
            
             CreateImage();
             
             image.SetPixel((uint)x, (uint)y, color.SFMLColor);
-            texture = new SFML.Graphics.Texture(image);
-
             needsUpdate = true;
+            
+
+           
         }
 
         /// <summary>

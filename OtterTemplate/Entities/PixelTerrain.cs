@@ -27,6 +27,7 @@ namespace Thaum.Entities
             // Load image.
             TerrainTexture = new Texture(filename);
             TerrainDisplay = new Image(filename);
+            TerrainDisplay.SetTexture(TerrainTexture);
             AddGraphic(TerrainDisplay);
             GFXDirty = true;
         }
@@ -44,7 +45,7 @@ namespace Thaum.Entities
             if (GFXDirty)
             {
                 TerrainTexture.Update();
-                TerrainDisplay.SetTexture(TerrainTexture);
+                
 
                 GFXDirty = false;
             }
@@ -61,12 +62,13 @@ namespace Thaum.Entities
                     if(Math.Pow(xPosition - HolePosition.X, 2) + Math.Pow(yPosition - HolePosition.Y, 2) < Math.Pow(Radius, 2))
                     {
                         // Sanity check; don't run over texture memory!
-                        if(xPosition < 0 || xPosition > TerrainTexture.Width || yPosition < 0 || yPosition > TerrainTexture.Height)
+                        if(xPosition < 0 || xPosition >= TerrainTexture.Width || yPosition < 0 || yPosition >= TerrainTexture.Height)
                         {
                             continue;
                         }
                         // Remove pixel.
                         TerrainTexture.SetPixel((int)xPosition, (int)yPosition, Color.None);
+
 
                         // (Do dynamic physics pixels?)
 

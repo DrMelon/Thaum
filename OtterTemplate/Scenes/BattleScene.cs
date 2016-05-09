@@ -30,7 +30,7 @@ namespace Thaum.Scenes
 
             if(Game.Session("Player1").GetController<ControllerXbox360>().B.Pressed)
             {
-                TheTerrain.MakeHole(new Vector2(150, 123), 10.0f);
+                TheTerrain.MakeHole(new Vector2(150, 123), 200.0f);
             }
 
 
