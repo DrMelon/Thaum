@@ -85,7 +85,8 @@ namespace Thaum.Components
                 // If in walk-mode, check for open air and shift to phys-mode.
                 if(Stable)
                 {
-                    if (TheTerrain.GenericBresenhamRaycast(new Vector2(Entity.X, Entity.Y), new Vector2(0, PhysRadius)).X <= -1)
+                    Vector4 rayResult = TheTerrain.GenericBresenhamRaycast(new Vector2(Entity.X, Entity.Y), new Vector2(0, PhysRadius));
+                    if (rayResult.X <= -1)
                     {
                         // Ah! We are fallin'.
                         Stable = false;
@@ -126,27 +127,13 @@ namespace Thaum.Components
                         // Push-out of terrain
 
                         // Must find min. axis of seperation.
-                        Vector2 minSepAxis = new Vector2();
-                        if(rayResult.Y < Entity.Y)
-                        {
-                            minSepAxis.Y = rayResult.Y - Entity.Y;
-                        }
-                        else
-                        {
-                            minSepAxis.Y = Entity.Y - rayResult.Y;
-                        }
+                        Vector2 PopVec = new Vector2(PhysVeloc.X, PhysVeloc.Y);
+                        PopVec.Normalize();
+                        PopVec *= PhysRadius - (new Vector2(Entity.X - rayResult.X, Entity.Y - rayResult.Y).Length);
 
-                        if (rayResult.X < Entity.X)
-                        {
-                            minSepAxis.X = rayResult.X - Entity.X;
-                        }
-                        else
-                        {
-                            minSepAxis.X = Entity.X - rayResult.X;
-                        }
-
-                        Entity.X += minSepAxis.X;
-                        Entity.Y += minSepAxis.Y;
+                        Entity.X += PopVec.X;
+                        Entity.Y += PopVec.Y;
+                        
 
 
 
