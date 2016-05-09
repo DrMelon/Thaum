@@ -19,7 +19,7 @@ namespace Thaum.Scenes
         // Storage
         Music MenuMusic;
         Image DebugMenuImage;
-        BitmapFont SystemFont;
+        Font SystemFont;
         RichText MenuTitle;
         RichText MenuPlayDebugLevel;
         RichText MenuSoundTest;
@@ -41,24 +41,25 @@ namespace Thaum.Scenes
             DebugMenuImage.Repeat = true;
 
             // Load font & text
-            SystemFont = new BitmapFont(new Texture(Assets.FNT_SYSTEM), 8, 8, 65);
+            SystemFont = new Font(Assets.FNT_NOODLE);//new BitmapFont(new Texture(Assets.FNT_SYSTEM), 8, 8, 65);
+      
 
-            MenuTitle = new RichText("{waveAmpY:8}{waveRateY:2}DEBUG MENU", SystemFont, 8, 100, 100);
-            MenuTitle.MonospaceWidth = 8;
+            MenuTitle = new RichText("{waveAmpY:8}{waveRateY:2}{shadow:2}DEBUG MENU", SystemFont, 32, 100, 100);
+           // MenuTitle.MonospaceWidth = 8;
             MenuTitle.SetPosition(200, 100);
             MenuTitle.CenterOrigin();
 
-            MenuPlayDebugLevel = new RichText("{color:FF0}PLAY GAME", SystemFont, 8, 100, 100);
-            MenuPlayDebugLevel.MonospaceWidth = 8;
+            MenuPlayDebugLevel = new RichText("{color:FE0}{shake:1}{shadow:2}PLAY GAME", SystemFont, 32, 100, 100);
+           // MenuPlayDebugLevel.MonospaceWidth = 8;
             MenuPlayDebugLevel.SetPosition(100, 120);
 
-            MenuSoundTest = new RichText("SOUND TEST", SystemFont, 8, 100, 100);
-            MenuSoundTest.MonospaceWidth = 8;
-            MenuSoundTest.SetPosition(100, 130);
+            MenuSoundTest = new RichText("SOUND TEST", SystemFont, 32, 100, 100);
+           // MenuSoundTest.MonospaceWidth = 8;
+            MenuSoundTest.SetPosition(100, 150);
 
-            MenuQuit = new RichText("EXIT", SystemFont, 8, 100, 100);
-            MenuQuit.MonospaceWidth = 8;
-            MenuQuit.SetPosition(100, 140);
+            MenuQuit = new RichText("EXIT", SystemFont, 32, 100, 100);
+          //  MenuQuit.MonospaceWidth = 8;
+            MenuQuit.SetPosition(100, 190);
 
             // Fetch controller
             Player1Controller = Game.Session("Player1").GetController<ControllerXbox360>();
@@ -127,19 +128,19 @@ namespace Thaum.Scenes
             switch (CurrentSelection)
             {
                 case 0:
-                    MenuPlayDebugLevel.String = "{color:FF0}PLAY GAME";
+                    MenuPlayDebugLevel.String = "{color:FE0}{shake:1}{shadow:2}PLAY GAME";
                     MenuSoundTest.String = "SOUND TEST";
                     MenuQuit.String = "EXIT";
                     break;
                 case 1:
                     MenuPlayDebugLevel.String = "PLAY GAME";
-                    MenuSoundTest.String = "{color:FF0}SOUND TEST";
+                    MenuSoundTest.String = "{color:FE0}{shake:1}{shadow:2}SOUND TEST";
                     MenuQuit.String = "EXIT";
                     break;
                 case 2:
                     MenuPlayDebugLevel.String = "PLAY GAME";
                     MenuSoundTest.String = "SOUND TEST";
-                    MenuQuit.String = "{color:FF0}EXIT";
+                    MenuQuit.String = "{color:FE0}{shake:1}{shadow:2}VICTORY";
                     break;
             }
         }

@@ -51,6 +51,7 @@ namespace Thaum.Entities
                 explosionParticle.FinalSpeedY = -4.0f;
                 explosionParticle.FinalScaleX = 0.1f;
                 explosionParticle.FinalScaleY = 0.1f;
+                explosionParticle.Image.Scroll = Rand.Float(1.0f, 1.2f);
                 this.Scene.Add(explosionParticle);
             }
         }

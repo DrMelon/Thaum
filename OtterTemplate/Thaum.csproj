@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets.cs" />
+    <Compile Include="Entities\CameraShaker.cs" />
     <Compile Include="Entities\Explosion.cs" />
     <Compile Include="Entities\PixelTerrain.cs" />
     <Compile Include="Program.cs" />

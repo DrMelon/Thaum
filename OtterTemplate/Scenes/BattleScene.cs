@@ -18,11 +18,15 @@ namespace Thaum.Scenes
     class BattleScene : Scene
     {
         Entities.PixelTerrain TheTerrain;
+        Entities.CameraShaker CamShake;
 
         public BattleScene()
         {
             TheTerrain = new Entities.PixelTerrain(Assets.GFX_TERRAIN);
             Add(TheTerrain);
+
+            CamShake = new Entities.CameraShaker();
+            Add(CamShake);
         }
 
         public override void Update()
@@ -30,7 +34,8 @@ namespace Thaum.Scenes
 
             if (Game.Session("Player1").GetController<ControllerXbox360>().B.Pressed)
             {
-                Entities.Explosion newExplosion = new Entities.Explosion(TheTerrain, new Vector2(130, 125), 20);
+                Entities.Explosion newExplosion = new Entities.Explosion(TheTerrain, new Vector2(Rand.Float(50,350), Rand.Float(25,175)), 20);
+                CamShake.ShakeCamera(10);
                 Add(newExplosion);
             }
 
