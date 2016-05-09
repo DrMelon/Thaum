@@ -7,12 +7,12 @@ using Otter;
 
 //----------------
 // Author: J. Brown (DrMelon)
-// Part of the [OtterTemplate] Project.
+// Part of the [Thaum] Project.
 // Date: 09/03/2016
 //----------------
 // Purpose: Ultra-basic menu scene. Tool/level select.
 
-namespace NotSonic.Scenes
+namespace Thaum.Scenes
 {
     class MenuScene : Scene
     {
@@ -132,12 +132,12 @@ namespace NotSonic.Scenes
                     MenuQuit.String = "EXIT";
                     break;
                 case 1:
-                    MenuPlayDebugLevel.String = "PLAY TEST LEVEL";
+                    MenuPlayDebugLevel.String = "PLAY GAME";
                     MenuSoundTest.String = "{color:FF0}SOUND TEST";
                     MenuQuit.String = "EXIT";
                     break;
                 case 2:
-                    MenuPlayDebugLevel.String = "PLAY TEST LEVEL";
+                    MenuPlayDebugLevel.String = "PLAY GAME";
                     MenuSoundTest.String = "SOUND TEST";
                     MenuQuit.String = "{color:FF0}EXIT";
                     break;
@@ -150,7 +150,7 @@ namespace NotSonic.Scenes
             {
                 case 0:
                     // Load Game
-                    //Game.AddScene();
+                    Game.SwitchScene(new BattleScene());
                     break;
                 case 1:
                     // Load Sound Test Screen

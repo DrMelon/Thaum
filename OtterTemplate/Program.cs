@@ -7,14 +7,14 @@ using Otter;
 
 //----------------
 // Author: J. Brown (DrMelon)
-// Part of the [OtterTemplate] Project.
+// Part of the [Thaum] Project.
 // Date: 09/05/2016
 //----------------
 // Purpose: Main Program Entry Point. Initializes Otter Window.
 
 
 
-namespace OtterTemplate
+namespace Thaum
 {
     class Program
     {

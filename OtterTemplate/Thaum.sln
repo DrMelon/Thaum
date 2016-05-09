@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OtterTemplate", "OtterTemplate.csproj", "{1F3F62E9-8DA0-40D0-B836-8F6897750927}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thaum", "Thaum.csproj", "{1F3F62E9-8DA0-40D0-B836-8F6897750927}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Otter", "..\Otter\Otter\Otter.csproj", "{236485C2-A7BA-4DCD-808A-B3A634764402}"
 EndProject
