@@ -20,6 +20,8 @@ namespace Thaum.Scenes
         Entities.PixelTerrain TheTerrain;
         Entities.CameraShaker CamShake;
 
+        Entity PlyTest;
+
         public BattleScene()
         {
             TheTerrain = new Entities.PixelTerrain(Assets.GFX_TERRAIN);
@@ -27,6 +29,12 @@ namespace Thaum.Scenes
 
             CamShake = new Entities.CameraShaker();
             Add(CamShake);
+
+            PlyTest = new Entity(200, 50, Image.CreateCircle(8));
+            PlyTest.Graphic.CenterOrigin();
+            PlyTest.Graphic.Color = Color.Red;
+            PlyTest.AddComponent<Components.PlayerMovement>(new Components.PlayerMovement(TheTerrain, 8));
+            Add(PlyTest);
         }
 
         public override void Update()
