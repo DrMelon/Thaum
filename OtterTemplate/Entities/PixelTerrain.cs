@@ -88,9 +88,9 @@ namespace Thaum.Entities
             Vector2 result = new Vector2();
 
             // Check area around scanpoint, get average displacement.
-            for(int x = -ScanRadius; x < ScanRadius; x++)
+            for(int x = -ScanRadius; x <= ScanRadius; x++)
             {
-                for(int y = -ScanRadius; y < ScanRadius; y++)
+                for(int y = -ScanRadius; y <= ScanRadius; y++)
                 {
                     if(TerrainTexture.GetPixel(x + (int)PointOnTerrain.X, y + (int)PointOnTerrain.Y).A > 0)
                     {

@@ -86,7 +86,10 @@ namespace Thaum.Components
 
             if(Stable)
             {
-                MoveXY((int)WalkSpeed.X, (int)WalkSpeed.Y);
+                MovePixelTerrain();
+
+                Entity.X += WalkSpeed.X / 100;
+                Entity.Y += WalkSpeed.Y / 100;
             }
             else
             {
@@ -94,9 +97,14 @@ namespace Thaum.Components
                 PhysVeloc.X += PhysAccel.X;
                 PhysVeloc.Y += PhysAccel.Y;
 
-                MoveXY((int)PhysVeloc.X, (int)PhysVeloc.Y);
+                // check for collision
+                MovePixelTerrain();
 
-                
+                // go
+                Entity.X += PhysVeloc.X / 100;
+                Entity.Y += PhysVeloc.Y / 100;
+
+
             }
 
         }
@@ -107,7 +115,7 @@ namespace Thaum.Components
             physVec.Normalize();
 
             physVec *= Math.Max(PhysRadius + 1, PhysVeloc.Length / 100);
-            Draw.Line(Entity.X, Entity.Y, physVec.X + Entity.X, physVec.Y + Entity.Y, Color.Green);
+            Draw.Line(Entity.X, Entity.Y, physVec.X + Entity.X, physVec.Y + Entity.Y, Color.Red, 3);
         }
 
         public override void Render()
@@ -141,6 +149,7 @@ namespace Thaum.Components
                             {
                                 Entity.X = ray.X - PhysRadius / 2;
                             }
+                            WalkSpeed.X = 0;
                         }
                     }
 
@@ -187,6 +196,8 @@ namespace Thaum.Components
                         Vector2 SurfaceNormal = TheTerrain.GetSurfaceNormal(new Vector2(rayResult.X, rayResult.Y), 3);
                         Vector2 NewVeloc = new Vector2(PhysVeloc.X, PhysVeloc.Y);
 
+                       
+
                         SurfaceNormal.Normalize();
 
                         // Reflect r = d - 2(d . n)n
@@ -201,13 +212,12 @@ namespace Thaum.Components
                         // Must find min. axis of seperation.
                         Vector2 PopVec = new Vector2(PhysVeloc.X, PhysVeloc.Y);
                         PopVec.Normalize();
-                        PopVec *= PhysRadius - (new Vector2(Entity.X - rayResult.X, Entity.Y - rayResult.Y).Length);
+                        PopVec *= (PhysRadius-1) - (new Vector2(Entity.X - rayResult.Z, Entity.Y - rayResult.W).Length);
 
                         Entity.X += PopVec.X;
                         Entity.Y += PopVec.Y;
 
-                        
-
+                                              
 
                         // If velocity is too low, they are standing.
                         if (Math.Abs(PhysVeloc.Y) < 100 && Math.Abs(PhysVeloc.X) < 100)
