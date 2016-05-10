@@ -53,7 +53,7 @@ namespace Thaum.Scenes
                 Entities.Projectile newProjectile = new Entities.Projectile(Assets.GFX_BALL, 5.0f, TheTerrain);
                 newProjectile.X = PlyTest.X;
                 newProjectile.Y = PlyTest.Y;
-                newProjectile.Launch(new Vector2(150, -850));
+                newProjectile.Launch(new Vector2(Rand.Float(-500, 500), -850));
                 Add(newProjectile);
             }
 
@@ -67,6 +67,7 @@ namespace Thaum.Scenes
         public override void Render()
         {
             base.Render();
+
 
         }
     }

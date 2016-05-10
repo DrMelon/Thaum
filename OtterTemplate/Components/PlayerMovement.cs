@@ -101,6 +101,21 @@ namespace Thaum.Components
 
         }
 
+        public void DrawDebugStuff()
+        {
+            Vector2 physVec = new Vector2(PhysVeloc.X, PhysVeloc.Y);
+            physVec.Normalize();
+
+            physVec *= Math.Max(PhysRadius + 1, PhysVeloc.Length / 100);
+            Draw.Line(Entity.X, Entity.Y, physVec.X + Entity.X, physVec.Y + Entity.Y, Color.Green);
+        }
+
+        public override void Render()
+        {
+            base.Render();
+            DrawDebugStuff();
+        }
+
         public void MovePixelTerrain()
         {
             // Test against pix terrain, using surf. normals & bresenham cast
