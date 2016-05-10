@@ -16,14 +16,17 @@ namespace Thaum.Components
 {
     class PlayerMovement : Movement
     {
-        bool Stable;
-        Speed WalkSpeed;
+        public bool AllowControl = false;
+        public bool Stable;
+        public Speed WalkSpeed;
 
-        Speed PhysAccel;
-        Speed PhysVeloc;
-        int PhysRadius;
+        public Speed PhysAccel;
+        public Speed PhysVeloc;
+        public int PhysRadius;
+        public float PhysBounce;
+        public float PhysFriction;
 
-        Entities.PixelTerrain TheTerrain;
+        public Entities.PixelTerrain TheTerrain;
         
         
         public PlayerMovement(Entities.PixelTerrain terrain, int physradius)
@@ -37,7 +40,10 @@ namespace Thaum.Components
             PhysAccel = new Speed(600);
             PhysVeloc = new Speed(1200);
 
-            PhysAccel.Y = 98.1f; // gravity
+            PhysBounce = 0.2f;
+            PhysFriction = 0.65f;
+
+            PhysAccel.Y = 45.0f; // gravity
 
             OnMove = MovePixelTerrain;
         }
@@ -59,6 +65,24 @@ namespace Thaum.Components
         public override void Update()
         {
             base.Update();
+
+            if(AllowControl)
+            {
+                if(Scene.Game.Session("Player1").GetController<ControllerXbox360>().DPad.X > 0)
+                {
+                    WalkSpeed.X = 50;
+                    
+                }
+                if (Scene.Game.Session("Player1").GetController<ControllerXbox360>().DPad.X < 0)
+                {
+                    WalkSpeed.X = -50;
+                }
+                if (Scene.Game.Session("Player1").GetController<ControllerXbox360>().DPad.X == 0)
+                {
+                    WalkSpeed.X = 0;
+                    WalkSpeed.Y = 0;
+                }
+            }
 
             if(Stable)
             {
@@ -85,19 +109,50 @@ namespace Thaum.Components
                 // If in walk-mode, check for open air and shift to phys-mode.
                 if(Stable)
                 {
-                    Vector4 rayResult = TheTerrain.GenericBresenhamRaycast(new Vector2(Entity.X, Entity.Y), new Vector2(0, PhysRadius));
+                    PhysVeloc.Y = 0;
+                    PhysVeloc.X = 0;
+
+                    // Prevent clipping through walls
+                    if(WalkSpeed.X != 0)
+                    {
+                        Vector4 ray = TheTerrain.GenericBresenhamRaycast(new Vector2(Entity.X - PhysRadius / 2, Entity.Y), new Vector2(Entity.X + PhysRadius / 2, Entity.Y));
+                        if (ray.X > -1)
+                        {
+                            if (ray.X < Entity.X)
+                            {
+                                Entity.X = ray.X + 1 + PhysRadius / 2;
+                            }
+                            if (ray.X > Entity.X)
+                            {
+                                Entity.X = ray.X - PhysRadius / 2;
+                            }
+                        }
+                    }
+
+
+                    Vector4 rayResult = TheTerrain.GenericBresenhamRaycast(new Vector2(Entity.X, Entity.Y), new Vector2(Entity.X, Entity.Y + PhysRadius));
                     if (rayResult.X <= -1)
                     {
                         // Ah! We are fallin'.
                         Stable = false;
+                        
                     }
+                    else
+                    {
+                        // Stay on top of terrain
+                        Entity.Y = rayResult.W - PhysRadius;
+                    }
+
+
+
                 }
                 else
                 {
                     // If in phys-mode, check the terrain & do collision response based on speed etc.
                     Vector2 physVec = new Vector2(PhysVeloc.X, PhysVeloc.Y);
                     physVec.Normalize();
-                    physVec *= PhysRadius + 1;
+
+                    physVec *= Math.Max(PhysRadius + 1, PhysVeloc.Length / 100);
 
                     Vector4 rayResult = TheTerrain.GenericBresenhamRaycast(new Vector2(Entity.X, Entity.Y), new Vector2(Entity.X + physVec.X, Entity.Y + physVec.Y));
                     
@@ -106,10 +161,12 @@ namespace Thaum.Components
                         // Ray actually hit terrain!
 
                         // Players don't have great bounciness
-                        PhysVeloc.Y *= 0.5f;
+                        PhysVeloc.Y *= PhysBounce;
 
                         // But they can skid along terrain
-                        PhysVeloc.X *= 0.95f;
+                        PhysVeloc.X *= PhysFriction;
+
+                        
 
                         // Reflect velocity through surface normal
                         Vector2 SurfaceNormal = TheTerrain.GetSurfaceNormal(new Vector2(rayResult.X, rayResult.Y), 3);
@@ -133,18 +190,21 @@ namespace Thaum.Components
 
                         Entity.X += PopVec.X;
                         Entity.Y += PopVec.Y;
+
                         
 
 
+                        // If velocity is too low, they are standing.
+                        if (Math.Abs(PhysVeloc.Y) < 100 && Math.Abs(PhysVeloc.X) < 100)
+                        {
+                            Stable = true;
+                            
+                        }
 
 
                     }
 
-                    // If velocity is too low, they are standing.
-                    if(Math.Abs(PhysVeloc.Y) < 100 && Math.Abs(PhysVeloc.X) < 100)
-                    {
-                        Stable = true;
-                    }
+
                 }
             }
         }

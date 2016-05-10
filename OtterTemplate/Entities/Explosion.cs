@@ -18,11 +18,15 @@ namespace Thaum.Entities
     {
         PixelTerrain TerrainRef;
         float Radius;
+        float Force;
+        float Damage;
 
-        public Explosion(PixelTerrain terrain, Vector2 pos, float rad)
+        public Explosion(PixelTerrain terrain, Vector2 pos, float rad, float force, float dam)
         {
             TerrainRef = terrain;
             Radius = rad;
+            Force = force;
+            Damage = dam;
             X = pos.X;
             Y = pos.Y;
             LifeSpan = 1;
@@ -46,8 +50,8 @@ namespace Thaum.Entities
                 explosionParticle.Image.Shake = 1;
                 explosionParticle.X = Rand.Float(X - Radius/3, X + Radius/3);
                 explosionParticle.Y = Rand.Float(Y - Radius/3, Y + Radius/3);
-                explosionParticle.SpeedX = Rand.Float(-3, 3);
-                explosionParticle.SpeedY = Rand.Float(-3, 3);
+                explosionParticle.SpeedX = Rand.Float(-3 - (Force / 3), 3 + (Force / 3));
+                explosionParticle.SpeedY = Rand.Float(-3 - (Force / 3), 3 + (Force / 3));
                 explosionParticle.FinalSpeedY = -4.0f;
                 explosionParticle.FinalScaleX = 0.1f;
                 explosionParticle.FinalScaleY = 0.1f;

@@ -48,6 +48,7 @@
     <Compile Include="Entities\CameraShaker.cs" />
     <Compile Include="Entities\Explosion.cs" />
     <Compile Include="Entities\PixelTerrain.cs" />
+    <Compile Include="Entities\Projectile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scenes\BattleScene.cs" />

@@ -34,18 +34,30 @@ namespace Thaum.Scenes
             PlyTest.Graphic.CenterOrigin();
             PlyTest.Graphic.Color = Color.Red;
             PlyTest.AddComponent<Components.PlayerMovement>(new Components.PlayerMovement(TheTerrain, 8));
+            PlyTest.GetComponent<Components.PlayerMovement>().AllowControl = true;
             Add(PlyTest);
         }
 
         public override void Update()
         {
-
+            
             if (Game.Session("Player1").GetController<ControllerXbox360>().B.Pressed)
             {
-                Entities.Explosion newExplosion = new Entities.Explosion(TheTerrain, new Vector2(PlyTest.X,PlyTest.Y), 20);
+                Entities.Explosion newExplosion = new Entities.Explosion(TheTerrain, new Vector2(PlyTest.X,PlyTest.Y),20,5,50);
                 CamShake.ShakeCamera(10);
                 Add(newExplosion);
             }
+
+            if (Game.Session("Player1").GetController<ControllerXbox360>().A.Pressed)
+            {
+                Entities.Projectile newProjectile = new Entities.Projectile(Assets.GFX_BALL, 5.0f, TheTerrain);
+                newProjectile.X = PlyTest.X;
+                newProjectile.Y = PlyTest.Y;
+                newProjectile.Launch(new Vector2(150, -850));
+                Add(newProjectile);
+            }
+
+
 
 
 

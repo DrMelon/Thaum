@@ -236,9 +236,11 @@ namespace Otter {
         /// <param name="x">The x coordinate of the pixel to get.</param>
         /// <param name="y">The y coordinate of the pixel to get.</param>
         /// <returns>The Color of the pixel.</returns>
-        public Color GetPixel(int x, int y) {
-            if (x < 0) throw new ArgumentException("X must be greater or equal to than 0.");
-            if (y < 0) throw new ArgumentException("Y must be greater or equal to than 0.");
+        public Color GetPixel(int x, int y)
+        {
+            if (x < 0 || y < 0) return Color.None;
+
+            if (x >= Width || y >= Height) return Color.None;
 
             CreateImage();
 
