@@ -58,6 +58,60 @@ namespace Thaum.Entities
                 explosionParticle.Image.Scroll = Rand.Float(1.0f, 1.2f);
                 this.Scene.Add(explosionParticle);
             }
+
+            // Get objects in scene around me
+            List<PlayerUnit> plys = this.Scene.GetEntities<PlayerUnit>();
+            // radius check
+            Vector2 myPos = new Vector2(X, Y);
+            foreach (PlayerUnit ply in plys)
+            {
+                Vector2 plyPos = new Vector2(ply.X, ply.Y);
+                
+                if((myPos - plyPos).Length <= Radius)
+                {
+                    Components.PlayerMovement plyMove = ply.GetComponent<Components.PlayerMovement>();
+                    if (plyMove.Stable)
+                    {
+                        plyMove.Stable = false;
+                        plyMove.PhysVeloc.X = (plyPos - myPos).Normalized().X * (1.0f / (plyPos - myPos).Length) * Force * 1000;
+                        plyMove.PhysVeloc.Y = (plyPos - myPos).Normalized().Y * (1.0f / (plyPos - myPos).Length) * Force * 1000;
+                    }
+                    else
+                    {
+                        plyMove.PhysVeloc.X += (plyPos - myPos).Normalized().X * (1.0f / (plyPos - myPos).Length) * Force * 1000;
+                        plyMove.PhysVeloc.Y += (plyPos - myPos).Normalized().Y * (1.0f / (plyPos - myPos).Length) * Force * 1000;
+                    }
+
+                    //plyMove.AllowControl = false; 
+                    ply.TakeHealth((int)((1.0f / (plyPos - myPos).Length) * Damage));
+                }
+            }
+
+            List<Projectile> projs = this.Scene.GetEntities<Projectile>();
+            // radius check
+            foreach (Projectile proj in projs)
+            {
+                Vector2 projPos = new Vector2(proj.X, proj.Y);
+
+                if ((myPos - projPos).Length <= Radius)
+                {
+                    Components.PlayerMovement projMove = proj.GetComponent<Components.PlayerMovement>();
+                    if(projMove.Stable)
+                    {
+                        projMove.Stable = false;
+                        projMove.PhysVeloc.X = (projPos - myPos).Normalized().X * (1.0f / (projPos - myPos).Length) * Force * 1000;
+                        projMove.PhysVeloc.Y = (projPos - myPos).Normalized().Y * (1.0f / (projPos - myPos).Length) * Force * 1000;
+                    }
+                    else
+                    {
+                        projMove.PhysVeloc.X += (projPos - myPos).Normalized().X * (1.0f / (projPos - myPos).Length) * Force * 1000;
+                        projMove.PhysVeloc.Y += (projPos - myPos).Normalized().Y * (1.0f / (projPos - myPos).Length) * Force * 1000;
+                    }
+                    
+                    
+                }
+            }
+
         }
     }
 }

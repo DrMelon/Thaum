@@ -20,7 +20,10 @@ namespace Thaum.Scenes
         Entities.PixelTerrain TheTerrain;
         Entities.CameraShaker CamShake;
 
-        Entity PlyTest;
+        Entities.PlayerUnit PlyTest;
+
+        Entity WaterEnt;
+        Entity WaterBeneath;
 
         public BattleScene()
         {
@@ -30,13 +33,46 @@ namespace Thaum.Scenes
             CamShake = new Entities.CameraShaker();
             Add(CamShake);
 
-            PlyTest = new Entity(200, 50, Image.CreateCircle(8));
-            PlyTest.Graphic.CenterOrigin();
-            PlyTest.Graphic.Color = Color.Red;
-            PlyTest.AddComponent<Components.PlayerMovement>(new Components.PlayerMovement(TheTerrain, 8));
-            PlyTest.GetComponent<Components.PlayerMovement>().AllowControl = true;
+            PlyTest = new Entities.PlayerUnit(200, 50, TheTerrain);
             Add(PlyTest);
+
+            SetupWater();
+
+            CameraFocus = PlyTest;
         }
+
+        public void SetupWater()
+        {
+            WaterEnt = new Entity(0, TheTerrain.Graphic.Height - 8, new ImageSet(Assets.GFX_WATER, 32, 16));
+            WaterEnt.GetGraphic<ImageSet>().RepeatX = true;
+            WaterEnt.GetGraphic<ImageSet>().CenterOrigin();
+
+            WaterEnt.Layer = -10;
+            Add(WaterEnt);
+
+
+            WaterBeneath = new Entity();
+            WaterBeneath.AddGraphic(Image.CreateRectangle(Color.White));
+            WaterBeneath.Graphic.RepeatX = true;
+            WaterBeneath.X = 0;
+            WaterBeneath.Y = TheTerrain.Graphic.Height;
+            WaterBeneath.Layer = 20;
+            Add(WaterBeneath);
+
+            WaterBeneath = new Entity();
+            Graphic WaterBlue = Image.CreateRectangle(new Color(99.0f / 255.0f, 155.0f / 255.0f, 1.0f, 0.95f));
+            WaterBlue.RepeatX = true;
+            WaterBeneath.AddGraphic(WaterBlue);
+            WaterBeneath.X = 0;
+            WaterBeneath.Y = TheTerrain.Graphic.Height;
+            WaterBeneath.Layer = -9;
+            Add(WaterBeneath);
+
+            
+
+            
+        }
+
 
         public override void Update()
         {
@@ -58,10 +94,28 @@ namespace Thaum.Scenes
             }
 
 
+            if(WaterEnt.GetGraphic<ImageSet>().Frame < WaterEnt.GetGraphic<ImageSet>().Frames)
+            {
+                if(WaterEnt.GetGraphic<ImageSet>().Frame == WaterEnt.GetGraphic<ImageSet>().Frames - 1)
+                {
+                    WaterEnt.GetGraphic<ImageSet>().Frame = 0;
+                    
+                }
+                else
+                {
+                    WaterEnt.GetGraphic<ImageSet>().Frame += 1;
+                }
+                
+            }
 
 
 
             base.Update();
+        }
+
+        public override void UpdateLast()
+        {
+            
         }
 
         public override void Render()

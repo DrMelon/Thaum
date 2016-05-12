@@ -38,7 +38,7 @@ namespace Thaum.Components
 
             WalkSpeed = new Speed(50);
             PhysAccel = new Speed(600);
-            PhysVeloc = new Speed(1200);
+            PhysVeloc = new Speed(3200);
 
             PhysBounce = 0.2f;
             PhysFriction = 0.65f;
@@ -141,20 +141,39 @@ namespace Thaum.Components
                         Vector4 ray = TheTerrain.GenericBresenhamRaycast(new Vector2(Entity.X - PhysRadius / 2, Entity.Y), new Vector2(Entity.X + PhysRadius / 2, Entity.Y));
                         if (ray.X > -1)
                         {
+
                             if (ray.X < Entity.X)
                             {
-                                Entity.X = ray.X + 1 + PhysRadius / 2;
+                                Entity.X = ray.X + PhysRadius / 2;
+                                if (WalkSpeed.X < 0)
+                                {
+                                    WalkSpeed.X = 0;
+                                }
                             }
-                            if (ray.X > Entity.X)
+                            if (ray.Z > Entity.X)
                             {
-                                Entity.X = ray.X - PhysRadius / 2;
+                                Entity.X = ray.Z - PhysRadius / 2;
+                                if(WalkSpeed.X > 0)
+                                {
+                                    WalkSpeed.X = 0;
+                                }
                             }
-                            WalkSpeed.X = 0;
+                            
+                        }
+                        else
+                        {
+                            Vector4 ray2 = TheTerrain.GenericBresenhamRaycast(new Vector2(Entity.X, Entity.Y), new Vector2(Entity.X, Entity.Y + PhysRadius + 1));
+                            if (ray2.X <= -1)
+                            {
+                                // Ah! We are fallin'.
+                                Stable = false;
+
+                            }
                         }
                     }
 
 
-                    Vector4 rayResult = TheTerrain.GenericBresenhamRaycast(new Vector2(Entity.X, Entity.Y), new Vector2(Entity.X, Entity.Y + PhysRadius));
+                    Vector4 rayResult = TheTerrain.GenericBresenhamRaycast(new Vector2(Entity.X, Entity.Y), new Vector2(Entity.X, Entity.Y + PhysRadius + 1));
                     if (rayResult.X <= -1)
                     {
                         // Ah! We are fallin'.

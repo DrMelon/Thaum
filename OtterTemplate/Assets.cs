@@ -29,6 +29,7 @@ namespace Thaum
         public static string GFX_TERRAIN = ASSET_BASE_PATH + "Graphics/map/terrain1.png";
         public static string GFX_PARTICLE_EXPLODE1 = ASSET_BASE_PATH + "Graphics/explode.png";
         public static string GFX_BALL = ASSET_BASE_PATH + "Graphics/ball.png";
+        public static string GFX_WATER = ASSET_BASE_PATH + "Graphics/water.png";
 
     }
 }

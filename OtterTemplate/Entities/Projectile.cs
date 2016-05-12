@@ -66,7 +66,7 @@ namespace Thaum.Entities
             Yield = 16.0f;
             Force = 5.0f;
             Damage = 50.0f;
-            Bias = 0.0f;
+            Bias = 4.0f;
             Bounciness = 0.65f;
             Friction = 0.85f;
             WindAffect = 0.0f;
