@@ -64,7 +64,7 @@ namespace Thaum.Entities
             Type = (int)ExplosionType.Timed;
             Effect = (int)ExplosionEffect.Normal;
             Yield = 16.0f;
-            Force = 5.0f;
+            Force = 8.0f;
             Damage = 50.0f;
             Bias = 4.0f;
             Bounciness = 0.65f;

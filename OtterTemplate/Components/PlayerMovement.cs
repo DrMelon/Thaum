@@ -141,7 +141,13 @@ namespace Thaum.Components
                         Vector4 ray = TheTerrain.GenericBresenhamRaycast(new Vector2(Entity.X - PhysRadius / 2, Entity.Y), new Vector2(Entity.X + PhysRadius / 2, Entity.Y));
                         if (ray.X > -1)
                         {
+                            Vector4 ray2 = TheTerrain.GenericBresenhamRaycast(new Vector2(Entity.X, Entity.Y), new Vector2(Entity.X, Entity.Y + PhysRadius + 1));
+                            if (ray2.X <= -1)
+                            {
+                                // Ah! We are fallin'.
+                                Stable = false;
 
+                            }
                             if (ray.X < Entity.X)
                             {
                                 Entity.X = ray.X + PhysRadius / 2;
@@ -231,7 +237,7 @@ namespace Thaum.Components
                         // Must find min. axis of seperation.
                         Vector2 PopVec = new Vector2(PhysVeloc.X, PhysVeloc.Y);
                         PopVec.Normalize();
-                        PopVec *= (PhysRadius-1) - (new Vector2(Entity.X - rayResult.Z, Entity.Y - rayResult.W).Length);
+                        PopVec *= (PhysRadius) - (new Vector2(Entity.X - rayResult.Z, Entity.Y - rayResult.W).Length);
 
                         Entity.X += PopVec.X;
                         Entity.Y += PopVec.Y;
