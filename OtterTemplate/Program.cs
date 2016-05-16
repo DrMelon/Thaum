@@ -20,8 +20,8 @@ namespace Thaum
     {
         static void Main(string[] args)
         {
-            // Initialize Otter2D Framework, set Internal res to 400x240 (16:9 retro res) & window scale to 2x.
-            var theGame = new Otter.Game("Otter Template", 400, 240, 60, false);
+            // Initialize Otter2D Framework, set Internal res to 800x480 (16:9 retro res) & window scale to 2x.
+            var theGame = new Otter.Game("Otter Template", 800, 480, 60, false);
             theGame.SetWindowScale(2);
 
 
