@@ -131,17 +131,37 @@ namespace Thaum.Scenes
 
         public override void UpdateFirst()
         {
-            // Follow player if there's no projectiles. Otherwise follow one of them.
-            if(GetEntities<Entities.Projectile>().Count < 1)
+            // Follow player if there's nothing moving around the terrain. 
+            bool somethingMoving = false;
+            Entity movingThing = null;
+
+            foreach(Entities.Projectile proj in GetEntities<Entities.Projectile>())
+            {
+                somethingMoving = true;
+                movingThing = proj;
+                break;
+            }
+
+            foreach (Entities.PlayerUnit proj in GetEntities<Entities.PlayerUnit>())
+            {
+                if (proj.GetComponent<Components.PlayerMovement>().Stable == false && proj.GetComponent<Components.PlayerMovement>().PhysVeloc.Length > 150)
+                {
+                    somethingMoving = true;
+                    movingThing = proj;
+                    break;
+                }
+            }
+
+            if (somethingMoving == false)
             {
                 CamTarget.X = PlyTest.X;
                 CamTarget.Y = PlyTest.Y;
             }
             else
             {
-                Entities.Projectile theProj = GetEntities<Entities.Projectile>()[0];
-                CamTarget.X = theProj.X;
-                CamTarget.Y = theProj.Y;
+                
+                CamTarget.X = movingThing.X;
+                CamTarget.Y = movingThing.Y;
             }
 
 
