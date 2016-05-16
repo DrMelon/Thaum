@@ -1,0 +1,23 @@
+<projectile name="Test Projectile">
+	<explosion_type>Timed</explosion_type>
+	<explosion_effect projectile_to_spawn="cluster.xml">Normal</explosion_effect>
+	<homing_type>None</homing_type>
+	<sprite>
+		<image w="16" h="16">Graphics/Projectile/smile.png</image>
+		<frames>1</frames>
+		<rotation_style>None</rotation_style>
+		<anim_style>Static</anim_style>
+	</sprite>
+	<physics_radius>8.0</physics_radius>
+	<physics_bounciness>0.65</physics_bounciness>
+	<physics_friction>0.85</physics_friction>
+	<physics_wind>0.0</physics_wind>
+	<physics_wobble>0.0</physics_wobble>
+	<explosion_fuse>3.0</explosion_fuse>
+	<explosion_maxbounces>1</explosion_maxbounces>
+	<explosion_numspawns>5</explosion_numspawns>
+	<explosion_yield>50.0</explosion_yield>
+	<explosion_force>15.0</explosion_force>
+	<explosion_damage>50.0</explosion_damage>
+	<explosion_bias>4.0</explosion_bias>	
+</projectile>

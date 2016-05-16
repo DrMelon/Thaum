@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 //----------------
 // Author: J. Brown (DrMelon)
@@ -30,6 +31,12 @@ namespace Thaum
         public static string GFX_PARTICLE_EXPLODE1 = ASSET_BASE_PATH + "Graphics/explode.png";
         public static string GFX_BALL = ASSET_BASE_PATH + "Graphics/ball.png";
         public static string GFX_WATER = ASSET_BASE_PATH + "Graphics/water.png";
+
+        // XML File Loading
+        public static string PROJECTILES_DEFINE_FOLDER = ASSET_BASE_PATH + "Scripts/Projectiles/";
+        public static Dictionary<string, XmlDocument> LoadedProjectiles;
+
+        public static string PROJ_TEST = PROJECTILES_DEFINE_FOLDER + "test_projectile.xml";
 
     }
 }

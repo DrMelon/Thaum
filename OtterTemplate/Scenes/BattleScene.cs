@@ -25,6 +25,8 @@ namespace Thaum.Scenes
         Entity WaterEnt;
         Entity WaterBeneath;
 
+        Entity CamFocus;
+
         public BattleScene()
         {
             TheTerrain = new Entities.PixelTerrain(Assets.GFX_TERRAIN);
@@ -38,7 +40,12 @@ namespace Thaum.Scenes
 
             SetupWater();
 
-            CameraFocus = PlyTest;
+            CamFocus = new Entity(PlyTest.X, PlyTest.Y);
+
+            CameraFocus = CamFocus;
+
+            // Set up debug console stuff.
+            Otter.Debugger.Instance.RegisterCommands();
         }
 
         public void SetupWater()
@@ -73,6 +80,13 @@ namespace Thaum.Scenes
             
         }
 
+        [OtterCommand(helpText: "Reset XML-based objects.", group: "game")]
+        public static void ResetXML()
+        {
+            // Reset all xml defined objs.
+            Assets.LoadedProjectiles.Clear();
+        }
+       
 
         public override void Update()
         {
@@ -86,7 +100,7 @@ namespace Thaum.Scenes
 
             if (Game.Session("Player1").GetController<ControllerXbox360>().A.Pressed)
             {
-                Entities.Projectile newProjectile = new Entities.Projectile(Assets.GFX_BALL, 5.0f, TheTerrain);
+                Entities.Projectile newProjectile = new Entities.Projectile(Assets.PROJ_TEST, TheTerrain);
                 newProjectile.X = PlyTest.X;
                 newProjectile.Y = PlyTest.Y;
                 newProjectile.Launch(new Vector2(Rand.Float(-500, 500), -850));
@@ -113,9 +127,10 @@ namespace Thaum.Scenes
             base.Update();
         }
 
-        public override void UpdateLast()
+        public override void UpdateFirst()
         {
-            
+            CamFocus.X = Util.Lerp(CamFocus.X, PlyTest.X, 0.5f);
+            CamFocus.Y = Util.Lerp(CamFocus.Y, PlyTest.Y, 0.5f);
         }
 
         public override void Render()

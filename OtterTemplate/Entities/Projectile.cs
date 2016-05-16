@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using Otter;
 
 //----------------
@@ -39,9 +40,11 @@ namespace Thaum.Entities
         public enum RotationStyle { RotateToFace, SpinXVelocity, None };
         public enum AnimStyle { Static, Frames, FrameOnVelocity };
 
+        public string Name;
         public float PhysRadius;
         public int Type;
         public int Effect;
+        public int Homing;
         public float Yield;
         public float Force;
         public float Damage;
@@ -54,15 +57,27 @@ namespace Thaum.Entities
         public int MaxBounces;
         public int RotStyle;
         public int AniStyle;
+        public int NumSpawns;
+        public string ToSpawn;
+
 
         float CurrentTimer;
         Entities.PixelTerrain TheTerrain;
 
+        // Load from XML/JSON
+        public Projectile(string XMLFile, Entities.PixelTerrain terrain)
+        {
+            TheTerrain = terrain;
+            SetFromXML(XMLFile);
+        }
+
+        // Normal constructor
         public Projectile(string GFXString, float phys, Entities.PixelTerrain terrain)
         {
             // Default
             Type = (int)ExplosionType.Timed;
             Effect = (int)ExplosionEffect.Normal;
+            Homing = (int)HomingType.None;
             Yield = 16.0f;
             Force = 8.0f;
             Damage = 50.0f;
@@ -73,6 +88,10 @@ namespace Thaum.Entities
             Wobble = 0.0f;
             FuseLength = 3.0f;
             MaxBounces = 1;
+            NumSpawns = 5;
+            
+            // create ents based on xml stuff
+            
             AniStyle = (int)AnimStyle.Static;
             RotStyle = (int)RotationStyle.SpinXVelocity;
             PhysRadius = phys;
@@ -86,6 +105,213 @@ namespace Thaum.Entities
             Components.PlayerMovement myMovement = GetComponent<Components.PlayerMovement>();
             myMovement.PhysFriction = Friction;
             myMovement.PhysBounce = Bounciness;
+        }
+
+        // Set projectile's settings from XML file.
+        public void SetFromXML(string XMLFile)
+        {
+            XmlDocument ProjectileXML;
+            // First checking to see if it already exists in the projectile database.
+            if (Assets.LoadedProjectiles.ContainsKey(XMLFile))
+            {
+                Assets.LoadedProjectiles.TryGetValue(XMLFile, out ProjectileXML);
+            }
+            else // Otherwise load and add to database.
+            {             
+                ProjectileXML = new XmlDocument();
+                ProjectileXML.Load(XMLFile);
+                Assets.LoadedProjectiles.Add(XMLFile, ProjectileXML);
+            }
+
+            // Now build projectile from XML document.
+            var parentNode = ProjectileXML.DocumentElement;
+            
+            if(parentNode.Name != "projectile")
+            {
+                // Raise exception..! This is not a projectile file.
+                Util.Log("Projectile XML file load failure! File: " + XMLFile);
+            }
+            else
+            {
+                // Start loading file!
+                Name = parentNode.Attributes["name"].ToString();
+                foreach(XmlNode childnode in parentNode.ChildNodes)
+                {
+                    // Walk through file.
+                    if(childnode.Name == "explosion_type")
+                    {
+                        if(childnode.InnerText == "Timed")
+                        {
+                            Type = (int)ExplosionType.Timed;
+                        }
+                        if(childnode.InnerText == "Bounces")
+                        {
+                            Type = (int)ExplosionType.Bounces;
+                        }
+                        if(childnode.InnerText == "AtRest")
+                        {
+                            Type = (int)ExplosionType.AtRest;
+                        }
+                        if(childnode.InnerText == "Instant")
+                        {
+                            Type = (int)ExplosionType.Instant;
+                        }
+                    }
+                    if(childnode.Name == "explosion_effect")
+                    {
+                        if(childnode.InnerText == "Normal")
+                        {
+                            Effect = (int)ExplosionEffect.Normal;
+                        }
+                        if(childnode.InnerText == "Spawn")
+                        {
+                            Effect = (int)ExplosionEffect.Spawn;
+                            ToSpawn = childnode.AttributeString("projectile_to_spawn");
+                        }
+                    }
+                    if(childnode.Name == "homing_type")
+                    {
+                        if(childnode.InnerText == "None")
+                        {
+                            Homing = (int)HomingType.None;
+                        }
+                        if(childnode.InnerText == "Dumb")
+                        {
+                            Homing = (int)HomingType.Dumb;
+                        }
+                        if(childnode.InnerText == "Smart")
+                        {
+                            Homing = (int)HomingType.Smart;
+                        }
+                    }
+                    if(childnode.Name == "sprite")
+                    {
+                        // Load sprite info.
+                        string imgString = "";
+                        foreach (XmlNode spritenode in childnode.ChildNodes)
+                        {
+                            
+                            int numFrames = 0;
+                            int imgw = 1;
+                            int imgh = 1;
+
+                            if (spritenode.Name == "image")
+                            {
+                                imgString = Assets.ASSET_BASE_PATH + spritenode.InnerText;
+                                imgw = spritenode.AttributeInt("w");
+                                imgh = spritenode.AttributeInt("h");
+                            }
+                            if(spritenode.Name == "frames")
+                            {
+                                numFrames = spritenode.InnerInt();
+                            }
+                            if(spritenode.Name == "rotation_style")
+                            {
+                                if(spritenode.InnerText == "None")
+                                {
+                                    RotStyle = (int)RotationStyle.None;
+                                }
+                                if (spritenode.InnerText == "RotateToFace")
+                                {
+                                    RotStyle = (int)RotationStyle.RotateToFace;
+                                }
+                                if (spritenode.InnerText == "SpinXVelocity")
+                                {
+                                    RotStyle = (int)RotationStyle.SpinXVelocity;
+                                }
+                            }
+                            if (spritenode.Name == "anim_style")
+                            {
+                                if (spritenode.InnerText == "Static")
+                                {
+                                    AniStyle = (int)AnimStyle.Static;
+                                }
+                                if (spritenode.InnerText == "Frames")
+                                {
+                                    AniStyle = (int)AnimStyle.Frames;
+                                }
+                                if (spritenode.InnerText == "FrameOnVelocity")
+                                {
+                                    AniStyle = (int)AnimStyle.FrameOnVelocity;
+                                }
+                            }
+
+                            // Create gfx based on type.
+                            if(AniStyle == (int)AnimStyle.Static || numFrames < 2)
+                            {
+                                Image theImage = new Image(imgString);
+                                theImage.CenterOrigin();
+                                Graphic = theImage;
+                            }
+                            else
+                            {
+                                Spritemap<string> animSprite = new Spritemap<string>(imgString, imgw, imgh);
+                                AddGraphic(animSprite);
+                                Graphic.CenterOrigin();
+                            }
+
+                        }
+                    }
+                    if(childnode.Name == "physics_radius")
+                    {
+                        PhysRadius = childnode.InnerFloat();
+                    }
+                    if (childnode.Name == "physics_bounciness")
+                    {
+                        Bounciness = childnode.InnerFloat();
+                    }
+                    if (childnode.Name == "physics_friction")
+                    {
+                        Friction = childnode.InnerFloat();
+                    }
+                    if (childnode.Name == "physics_wind")
+                    {
+                        WindAffect = childnode.InnerFloat();
+                    }
+                    if (childnode.Name == "physics_wobble")
+                    {
+                        Wobble = childnode.InnerFloat();
+                    }
+                    if (childnode.Name == "explosion_fuse")
+                    {
+                        FuseLength = childnode.InnerFloat();
+                    }
+                    if (childnode.Name == "explosion_maxbounces")
+                    {
+                        MaxBounces = childnode.InnerInt();
+                    }
+                    if (childnode.Name == "explosion_numspawns")
+                    {
+                        NumSpawns = childnode.InnerInt();
+                    }
+                    if (childnode.Name == "explosion_yield")
+                    {
+                        Yield = childnode.InnerFloat();
+                    }
+                    if (childnode.Name == "explosion_force")
+                    {
+                        Force = childnode.InnerFloat();
+                    }
+                    if (childnode.Name == "explosion_damage")
+                    {
+                        Damage = childnode.InnerFloat();
+                    }
+                    if (childnode.Name == "explosion_bias")
+                    {
+                        Bias = childnode.InnerFloat();
+                    }
+                }
+            }
+
+
+
+            AddComponent(new Components.PlayerMovement(TheTerrain, (int)PhysRadius));
+            Components.PlayerMovement myMovement = GetComponent<Components.PlayerMovement>();
+            myMovement.PhysFriction = Friction;
+            myMovement.PhysBounce = Bounciness;
+            CurrentTimer = FuseLength;
+
+
         }
 
         public override void Update()
@@ -127,6 +353,16 @@ namespace Thaum.Entities
             {
                 // Make an explosion with the relevant settings, here.
                 Scene.Add(new Explosion(TheTerrain, new Vector2(X, Y + Bias), Yield, Force, Damage));
+            }
+            if (Effect == (int)ExplosionEffect.Spawn)
+            {
+                // Make an explosion with the relevant settings, here.
+                Scene.Add(new Explosion(TheTerrain, new Vector2(X, Y + Bias), Yield, Force, Damage));
+                // Create new objects
+                for(int i = 0; i < NumSpawns; i++)
+                {
+
+                }
             }
 
 

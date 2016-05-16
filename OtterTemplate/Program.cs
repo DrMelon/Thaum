@@ -62,6 +62,8 @@ namespace Thaum
             // Link Left Stick to D-Pad control.
             playerOneSession.GetController<ControllerXbox360>().DPad.AddAxis(playerOneSession.GetController<ControllerXbox360>().LeftStick);
 
+            // Set up assets
+            Assets.LoadedProjectiles = new Dictionary<string, System.Xml.XmlDocument>();
 
             // Create menu scene
             theGame.AddScene(new Scenes.MenuScene());

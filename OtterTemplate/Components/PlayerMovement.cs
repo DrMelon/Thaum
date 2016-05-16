@@ -121,7 +121,7 @@ namespace Thaum.Components
         public override void Render()
         {
             base.Render();
-            DrawDebugStuff();
+            //DrawDebugStuff();
         }
 
         public void MovePixelTerrain()
