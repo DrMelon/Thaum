@@ -334,7 +334,17 @@ namespace Thaum.Entities
                     Detonate();
                 }
             }
-
+            if(RotStyle == (int)RotationStyle.RotateToFace)
+            {
+                Components.PlayerMovement myMovement = GetComponent<Components.PlayerMovement>();
+                Graphic.Angle = (float)Math.Atan2(myMovement.PhysVeloc.Y, myMovement.PhysVeloc.X);
+            }
+            if (RotStyle == (int)RotationStyle.SpinXVelocity)
+            {
+                Components.PlayerMovement myMovement = GetComponent<Components.PlayerMovement>();
+                Graphic.Smooth = true;
+                Graphic.Angle -= (float)myMovement.PhysVeloc.X / 10.0f;
+            }
         }
 
         public void Launch(Vector2 launchVector)

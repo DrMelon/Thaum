@@ -26,6 +26,7 @@ namespace Thaum.Scenes
         Entity WaterBeneath;
 
         Entity CamFocus;
+        Entity CamTarget;
 
         public BattleScene()
         {
@@ -41,6 +42,7 @@ namespace Thaum.Scenes
             SetupWater();
 
             CamFocus = new Entity(PlyTest.X, PlyTest.Y);
+            CamTarget = new Entity(PlyTest.X, PlyTest.Y);
 
             CameraFocus = CamFocus;
 
@@ -129,8 +131,24 @@ namespace Thaum.Scenes
 
         public override void UpdateFirst()
         {
-            CamFocus.X = Util.Lerp(CamFocus.X, PlyTest.X, 0.5f);
-            CamFocus.Y = Util.Lerp(CamFocus.Y, PlyTest.Y, 0.5f);
+            // Follow player if there's no projectiles. Otherwise follow one of them.
+            if(GetEntities<Entities.Projectile>().Count < 1)
+            {
+                CamTarget.X = PlyTest.X;
+                CamTarget.Y = PlyTest.Y;
+            }
+            else
+            {
+                Entities.Projectile theProj = GetEntities<Entities.Projectile>()[0];
+                CamTarget.X = theProj.X;
+                CamTarget.Y = theProj.Y;
+            }
+
+
+
+            // Update camera action
+            CamFocus.X = Util.Lerp(CamFocus.X, CamTarget.X, 0.1f);
+            CamFocus.Y = Util.Lerp(CamFocus.Y, CamTarget.Y, 0.1f);
         }
 
         public override void Render()

@@ -209,16 +209,12 @@ namespace Thaum.Components
                     {
                         // Ray actually hit terrain!
 
-                        // Players don't have great bounciness
-                        PhysVeloc.Y *= PhysBounce;
-
-                        // But they can skid along terrain
-                        PhysVeloc.X *= PhysFriction;
-
-                        
+                       
 
                         // Reflect velocity through surface normal
                         Vector2 SurfaceNormal = TheTerrain.GetSurfaceNormal(new Vector2(rayResult.X, rayResult.Y), 3);
+                        Vector2 SurfaceTangent = new Vector2(-SurfaceNormal.Y, -SurfaceNormal.X);
+                        SurfaceTangent.Normalize();
                         Vector2 NewVeloc = new Vector2(PhysVeloc.X, PhysVeloc.Y);
 
                        
@@ -242,7 +238,14 @@ namespace Thaum.Components
                         Entity.X += PopVec.X;
                         Entity.Y += PopVec.Y;
 
-                                              
+                        // Mult Velocities by bounce amt
+                        PhysVeloc.X *= PhysBounce;
+                        PhysVeloc.Y *= PhysBounce;
+
+                        PhysVeloc.X -= (SurfaceTangent.X * PhysVeloc.X) * (1.0f - PhysFriction);
+                        PhysVeloc.Y -= (SurfaceTangent.Y * PhysVeloc.Y) * (1.0f - PhysFriction);
+
+
 
                         // If velocity is too low, they are standing.
                         if (Math.Abs(PhysVeloc.Y) < 100 && Math.Abs(PhysVeloc.X) < 100)
