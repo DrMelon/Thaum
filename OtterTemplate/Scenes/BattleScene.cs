@@ -144,7 +144,7 @@ namespace Thaum.Scenes
 
             foreach (Entities.PlayerUnit proj in GetEntities<Entities.PlayerUnit>())
             {
-                if (proj.GetComponent<Components.PlayerMovement>().Stable == false && proj.GetComponent<Components.PlayerMovement>().PhysVeloc.Length > 150)
+                if ((proj.GetComponent<Components.PlayerMovement>().Stable == false && proj.GetComponent<Components.PlayerMovement>().PhysVeloc.Length > 150) || proj.GetComponent<Components.PlayerMovement>().WalkSpeed.Length > 0)
                 {
                     somethingMoving = true;
                     movingThing = proj;
