@@ -31,6 +31,12 @@ namespace Thaum
         public static string GFX_PARTICLE_EXPLODE1 = ASSET_BASE_PATH + "Graphics/explode.png";
         public static string GFX_BALL = ASSET_BASE_PATH + "Graphics/ball.png";
         public static string GFX_WATER = ASSET_BASE_PATH + "Graphics/water.png";
+        public static string GFX_PARA1 = ASSET_BASE_PATH + "Graphics/para1.png";
+        public static string GFX_PARA2 = ASSET_BASE_PATH + "Graphics/para2.png";
+        public static string GFX_PARA3 = ASSET_BASE_PATH + "Graphics/para3.png";
+        public static string GFX_PARA4 = ASSET_BASE_PATH + "Graphics/para4.png";
+        public static string GFX_PARA5 = ASSET_BASE_PATH + "Graphics/para5.png";
+        public static string GFX_SKY = ASSET_BASE_PATH + "Graphics/sky.png";
 
         // XML File Loading
         public static string PROJECTILES_DEFINE_FOLDER = ASSET_BASE_PATH + "Scripts/Projectiles/";

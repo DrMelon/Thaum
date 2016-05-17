@@ -17,7 +17,7 @@
 	<explosion_maxbounces>1</explosion_maxbounces>
 	<explosion_numspawns>5</explosion_numspawns>
 	<explosion_yield>20.0</explosion_yield>
-	<explosion_force>8.0</explosion_force>
+	<explosion_force>40.0</explosion_force>
 	<explosion_damage>50.0</explosion_damage>
 	<explosion_bias>4.0</explosion_bias>	
 </projectile>

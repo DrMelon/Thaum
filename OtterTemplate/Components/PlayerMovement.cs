@@ -25,6 +25,8 @@ namespace Thaum.Components
         public int PhysRadius;
         public float PhysBounce;
         public float PhysFriction;
+        public int Facing;
+        public bool Underwater = false;
 
         public Entities.PixelTerrain TheTerrain;
         
@@ -39,6 +41,7 @@ namespace Thaum.Components
             WalkSpeed = new Speed(50);
             PhysAccel = new Speed(600);
             PhysVeloc = new Speed(3200);
+            Facing = 1;
 
             PhysBounce = 0.2f;
             PhysFriction = 0.65f;
@@ -71,11 +74,12 @@ namespace Thaum.Components
                 if(Scene.Game.Session("Player1").GetController<ControllerXbox360>().DPad.X > 0)
                 {
                     WalkSpeed.X = 50;
-                    
+                    Facing = 1;
                 }
                 if (Scene.Game.Session("Player1").GetController<ControllerXbox360>().DPad.X < 0)
                 {
                     WalkSpeed.X = -50;
+                    Facing = -1;
                 }
                 if (Scene.Game.Session("Player1").GetController<ControllerXbox360>().DPad.X == 0)
                 {
@@ -104,7 +108,31 @@ namespace Thaum.Components
                 Entity.X += PhysVeloc.X / 100;
                 Entity.Y += PhysVeloc.Y / 100;
 
+                if(PhysVeloc.X < 0)
+                {
+                    Facing = -1;
+                }
+                if(PhysVeloc.X > 0)
+                {
+                    Facing = 1;
+                }
 
+
+            }
+
+            if(Entity.Y > TheTerrain.Graphic.Height)
+            {
+                //Underwater!
+                PhysVeloc.Y *= 0.05f;
+                PhysVeloc.X *= 0.05f;
+                Stable = false;
+                if(!Underwater)
+                {
+                    Entity.Timer = 0;
+                    Entity.LifeSpan = 90.0f;
+                    Underwater = true;
+                }
+               
             }
 
         }
