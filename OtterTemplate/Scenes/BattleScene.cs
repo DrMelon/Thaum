@@ -34,8 +34,11 @@ namespace Thaum.Scenes
 
         Entity Sky;
 
+        float CamSwitchRest;
         Entity CamFocus;
         Entity CamTarget;
+        Entity FollowTarget;
+        Entity NextFollowTarget;
 
         public BattleScene()
         {
@@ -60,8 +63,10 @@ namespace Thaum.Scenes
 
             CamFocus = new Entity(ActivePlayer.X, ActivePlayer.Y);
             CamTarget = new Entity(ActivePlayer.X, ActivePlayer.Y);
+            
 
             CameraFocus = CamFocus;
+            FollowTarget = ActivePlayer;
 
             // Set up debug console stuff.
             Otter.Debugger.Instance.RegisterCommands();
@@ -204,6 +209,16 @@ namespace Thaum.Scenes
         public override void UpdateFirst()
         {
             // Follow player if there's nothing moving around the terrain. 
+            if(CamSwitchRest > 0)
+            {
+                CamSwitchRest--;
+            }
+            if(CamSwitchRest < 1 && NextFollowTarget != null)
+            {
+                FollowTarget = NextFollowTarget;
+                NextFollowTarget = null;
+            }
+            
             bool somethingMoving = false;
             Entity movingThing = null;
 
@@ -211,6 +226,7 @@ namespace Thaum.Scenes
             {
                 somethingMoving = true;
                 movingThing = proj;
+                
                 break;
             }
 
@@ -220,26 +236,42 @@ namespace Thaum.Scenes
                 {
                     somethingMoving = true;
                     movingThing = proj;
+                    
                     break;
                 }
             }
 
             if (somethingMoving == false)
             {
-                CamTarget.X = ActivePlayer.X;
-                CamTarget.Y = ActivePlayer.Y;
+                CamSwitchTarget(ActivePlayer);
             }
             else
             {
-                CamTarget.X = movingThing.X;
-                CamTarget.Y = movingThing.Y;
+                FollowTarget = movingThing;
             }
 
+            if(FollowTarget != null)
+            {
+
+                CamTarget.X = FollowTarget.X;
+                CamTarget.Y = FollowTarget.Y;
+            }
+           
 
 
             // Update camera action
             CamFocus.X = Util.Lerp(CamFocus.X, CamTarget.X, 0.1f);
             CamFocus.Y = Util.Lerp(CamFocus.Y, CamTarget.Y, 0.1f);
+        }
+
+        public void CamSwitchTarget(Entity newTarget)
+        {
+            if(CamSwitchRest < 1)
+            {
+                NextFollowTarget = newTarget;
+                CamSwitchRest = 30.0f;
+            }
+           
         }
 
         public override void Render()
