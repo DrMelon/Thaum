@@ -18,7 +18,7 @@ namespace Thaum.Scenes
     class BattleScene : Scene
     {
         Entities.PixelTerrain TheTerrain;
-        Entities.CameraShaker CamShake;
+        public Entities.CameraShaker CamShake;
 
         Entities.PlayerUnit ActivePlayer;
         List<Entities.PlayerUnit> AllUnits;
@@ -210,6 +210,7 @@ namespace Thaum.Scenes
 
         public override void UpdateFirst()
         {
+            base.UpdateFirst();
             // Follow player if there's nothing moving around the terrain. 
             if(CamSwitchRest > 0)
             {

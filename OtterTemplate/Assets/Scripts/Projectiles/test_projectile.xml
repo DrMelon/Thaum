@@ -1,14 +1,14 @@
 <projectile name="Test Projectile">
 	<explosion_type>Timed</explosion_type>
-	<explosion_effect projectile_to_spawn="cluster.xml">Normal</explosion_effect>
+	<explosion_effect projectile_to_spawn="cluster.xml">Spawn</explosion_effect>
 	<homing_type>None</homing_type>
 	<sprite>
-		<image w="16" h="16">Graphics/Projectile/smile.png</image>
+		<image w="16" h="16">Graphics/Projectile/fireball.png</image>
 		<frames>1</frames>
-		<rotation_style>SpinXVelocity</rotation_style>
+		<rotation_style>RotateToFace</rotation_style>
 		<anim_style>Static</anim_style>
 	</sprite>
-	<physics_radius>8.0</physics_radius>
+	<physics_radius>4.0</physics_radius>
 	<physics_bounciness>0.65</physics_bounciness>
 	<physics_friction>0.85</physics_friction>
 	<physics_wind>0.0</physics_wind>

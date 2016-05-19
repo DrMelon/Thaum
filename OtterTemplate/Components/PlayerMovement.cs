@@ -321,6 +321,28 @@ namespace Thaum.Components
                         PhysVeloc.X -= (SurfaceTangent.X * PhysVeloc.X) * (1.0f - PhysFriction);
                         PhysVeloc.Y -= (SurfaceTangent.Y * PhysVeloc.Y) * (1.0f - PhysFriction);
 
+                        // Check to see if the parent entity is a projectile. If so, take away the number of remaining bounces & flag for instant death.
+                        if(Entity.GetType() == Type.GetType("Thaum.Entities.Projectile"))
+                        {
+                            Entities.Projectile myProjectile = (Entities.Projectile)Entity;
+
+                            if(myProjectile.Type == (int)Entities.Projectile.ExplosionType.Bounces)
+                            {
+                                myProjectile.MaxBounces--;
+                                if(myProjectile.MaxBounces < 0)
+                                {
+                                    myProjectile.Detonate();
+                                }
+                            }
+
+                            if(myProjectile.Type == (int)Entities.Projectile.ExplosionType.Instant)
+                            {
+                                myProjectile.Detonate();
+                            }
+                            
+                            
+
+                        }
 
 
                         // If velocity is too low, they are standing.

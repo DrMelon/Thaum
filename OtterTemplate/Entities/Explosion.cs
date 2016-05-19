@@ -35,6 +35,7 @@ namespace Thaum.Entities
         public override void Added()
         {
             base.Added();
+            Scene.GetEntity<Entities.CameraShaker>().ShakeCamera();
             // Make a hole!
             if(TerrainRef != null)
             {

@@ -24,7 +24,7 @@ namespace Thaum.Entities
         public static int MAX_JUMP = 950;
 
         public static int SMALL_FIRE = 50;
-        public static int MAX_FIRE = 1500;
+        public static int MAX_FIRE = 2000;
 
         public string Name;
         public int Health;
@@ -46,12 +46,12 @@ namespace Thaum.Entities
             Health = 100;
             AimAngle = 45;
             Name = "Unnamed Wizard";
-            myMovement = new PlayerMovement(terrain, 16);
+            myMovement = new PlayerMovement(terrain, 8);
             myMovement.AllowControl = true;
             AddComponent(myMovement);
 
             // Add GFX
-            AddGraphic(Image.CreateCircle(16, Color.Magenta));
+            AddGraphic(new Image(Assets.GFX_WIZ));
             Graphic.CenterOrigin();
 
             Crosshair = Image.CreateCircle(4, Color.Red);
@@ -155,6 +155,14 @@ namespace Thaum.Entities
                 }
 
                 AimAngle = (int)Util.Clamp(AimAngle, -90.0f, 90.0f);
+                if(myMovement.Facing > 0)
+                {
+                    Graphic.ScaleX = 1.0f;
+                }
+                if(myMovement.Facing < 0)
+                {
+                    Graphic.ScaleX = -1.0f;
+                }
             }
 
         }

@@ -319,7 +319,7 @@ namespace Thaum.Entities
             base.Update();
 
             // Check Timed Explosion
-            if(Type == (int)ExplosionType.Timed)
+            if (Type == (int)ExplosionType.Timed)
             {
                 if (Game.FixedFramerate)
                 {
@@ -329,15 +329,15 @@ namespace Thaum.Entities
                 {
                     CurrentTimer -= Game.DeltaTime;
                 }
-                if(CurrentTimer <= 0)
+                if (CurrentTimer <= 0)
                 {
                     Detonate();
                 }
             }
-            if(RotStyle == (int)RotationStyle.RotateToFace)
+            if (RotStyle == (int)RotationStyle.RotateToFace)
             {
                 Components.PlayerMovement myMovement = GetComponent<Components.PlayerMovement>();
-                Graphic.Angle = (float)Math.Atan2(myMovement.PhysVeloc.Y, myMovement.PhysVeloc.X);
+                Graphic.Angle = (Util.RAD_TO_DEG * (float)Math.Atan2(-myMovement.PhysVeloc.Y, myMovement.PhysVeloc.X));
             }
             if (RotStyle == (int)RotationStyle.SpinXVelocity)
             {
@@ -345,7 +345,20 @@ namespace Thaum.Entities
                 Graphic.Smooth = true;
                 Graphic.Angle -= (float)myMovement.PhysVeloc.X / 10.0f;
             }
+            if (AniStyle == (int)AnimStyle.Frames)
+            {
+                Spritemap<string> mySprite = GetGraphic<Spritemap<string>>();
+                mySprite.Play(false);
+            }
+            if (AniStyle == (int)AnimStyle.FrameOnVelocity)
+            {
+                Components.PlayerMovement myMovement = GetComponent<Components.PlayerMovement>();
+                Spritemap<string> mySprite = GetGraphic<Spritemap<string>>();
+                mySprite.Play(false);
+                mySprite.Speed = myMovement.PhysVeloc.X / myMovement.PhysVeloc.MaxX;
+            }
         }
+
 
         public void Launch(Vector2 launchVector)
         {
@@ -369,9 +382,14 @@ namespace Thaum.Entities
                 // Make an explosion with the relevant settings, here.
                 Scene.Add(new Explosion(TheTerrain, new Vector2(X, Y + Bias), Yield, Force, Damage));
                 // Create new objects
+                Rand.PushSeed((int)Game.Timer);
                 for(int i = 0; i < NumSpawns; i++)
                 {
-
+                    Projectile newProjectile = new Projectile(Assets.PROJECTILES_DEFINE_FOLDER + ToSpawn, TheTerrain);
+                    newProjectile.X = X;
+                    newProjectile.Y = Y;
+                    newProjectile.Launch(new Vector2(Rand.Float(-200, 200), Rand.Float(-400, -200)));
+                    Scene.Add(newProjectile);
                 }
             }
 

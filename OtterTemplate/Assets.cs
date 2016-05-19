@@ -37,6 +37,7 @@ namespace Thaum
         public static string GFX_PARA4 = ASSET_BASE_PATH + "Graphics/para4.png";
         public static string GFX_PARA5 = ASSET_BASE_PATH + "Graphics/para5.png";
         public static string GFX_SKY = ASSET_BASE_PATH + "Graphics/sky.png";
+        public static string GFX_WIZ = ASSET_BASE_PATH + "Graphics/wizard.png";
 
         // XML File Loading
         public static string PROJECTILES_DEFINE_FOLDER = ASSET_BASE_PATH + "Scripts/Projectiles/";
