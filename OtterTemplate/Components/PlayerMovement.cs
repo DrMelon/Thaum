@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Otter;
+using Thaum.Scenes;
 
 //----------------
 // Author: J. Brown (DrMelon)
 // Part of the [Thaum] Project.
-// Date: 09/03/2016
+// Date: 09/05/2016
 //----------------
 // Purpose: Player movement class; has two states, stable (walking) and physics-driven.
 
@@ -65,6 +66,11 @@ namespace Thaum.Components
             OnMove();
         }
 
+        public static Vector2 Acceleration(RK4.State state, PlayerMovement myMovement, float dt)
+        {
+            return (new Vector2(myMovement.PhysAccel.X / 100, myMovement.PhysAccel.Y / 100));
+        }
+
         public override void Update()
         {
             base.Update();
@@ -94,21 +100,46 @@ namespace Thaum.Components
 
                 Entity.X += WalkSpeed.X / 100;
                 Entity.Y += WalkSpeed.Y / 100;
+
             }
             else
             {
-                // Move by physics
-                PhysVeloc.X += PhysAccel.X;
-                PhysVeloc.Y += PhysAccel.Y;
+
+                //////////////////////////////////////////////////////////////////////////
+                /// OLD LOGIC
+                /// 
+
+                //PhysVeloc.X += PhysAccel.X;
+                //PhysVeloc.Y += PhysAccel.Y;
 
                 // check for collision
-                MovePixelTerrain();
+                //MovePixelTerrain();
 
                 // go
-                Entity.X += PhysVeloc.X / 100;
-                Entity.Y += PhysVeloc.Y / 100;
+                //Entity.X += PhysVeloc.X / 100;
+                //Entity.Y += PhysVeloc.Y / 100;
 
-                if(PhysVeloc.X < 0)
+                //////////////////////////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////////////////////////
+
+
+
+                // Move by physics
+                RK4.State currentState = new RK4.State();
+                currentState.Velocity = new Vector2(PhysVeloc.X / 100, PhysVeloc.Y / 100);
+                currentState.Position = new Vector2(Entity.X, Entity.Y);
+                RK4.RK4.IntegrateStep(ref currentState, Game.Instance.Timer, BattleScene.TimeScale, this);
+
+
+                Entity.X = currentState.Position.X;
+                Entity.Y = currentState.Position.Y;
+                PhysVeloc.X = currentState.Velocity.X * 100;
+                PhysVeloc.Y = currentState.Velocity.Y * 100;
+
+                MovePixelTerrain();
+
+
+                if (PhysVeloc.X < 0)
                 {
                     Facing = -1;
                 }
@@ -134,6 +165,8 @@ namespace Thaum.Components
                 }
                
             }
+
+
 
         }
 
@@ -232,8 +265,23 @@ namespace Thaum.Components
                     physVec *= Math.Max(PhysRadius + 1, PhysVeloc.Length / 100);
 
                     Vector4 rayResult = TheTerrain.GenericBresenhamRaycast(new Vector2(Entity.X, Entity.Y), new Vector2(Entity.X + physVec.X, Entity.Y + physVec.Y));
-                    
-                    if(rayResult.X != -1)
+                    Vector4 wallCheck = TheTerrain.GenericBresenhamRaycast(new Vector2(Entity.X - PhysRadius / 2, Entity.Y), new Vector2(Entity.X + PhysRadius / 2, Entity.Y));
+
+                    if (wallCheck.X > -1)
+                    {
+
+                        if (wallCheck.X < Entity.X)
+                        {
+                            Entity.X = wallCheck.X + PhysRadius / 2;
+                        }
+                        if (wallCheck.Z > Entity.X)
+                        {
+                            Entity.X = wallCheck.Z - PhysRadius / 2;
+                        }
+
+                    }
+
+                    if (rayResult.X != -1)
                     {
                         // Ray actually hit terrain!
 

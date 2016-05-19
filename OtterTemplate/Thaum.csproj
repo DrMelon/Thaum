@@ -52,6 +52,9 @@
     <Compile Include="Entities\Projectile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RK4\Derivative.cs" />
+    <Compile Include="RK4\RK4.cs" />
+    <Compile Include="RK4\State.cs" />
     <Compile Include="Scenes\BattleScene.cs" />
     <Compile Include="Scenes\MenuScene.cs" />
   </ItemGroup>

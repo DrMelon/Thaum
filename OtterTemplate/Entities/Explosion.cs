@@ -8,7 +8,7 @@ using Otter;
 //----------------
 // Author: J. Brown (DrMelon)
 // Part of the [Thaum] Project.
-// Date: 09/03/2016
+// Date: 09/05/2016
 //----------------
 // Purpose: Explosions!! Pretty self-explanatory.
 

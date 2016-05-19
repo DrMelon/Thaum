@@ -46,15 +46,15 @@ namespace Thaum.Entities
             Health = 100;
             AimAngle = 45;
             Name = "Unnamed Wizard";
-            myMovement = new PlayerMovement(terrain, 8);
+            myMovement = new PlayerMovement(terrain, 16);
             myMovement.AllowControl = true;
             AddComponent(myMovement);
 
             // Add GFX
-            AddGraphic(Image.CreateCircle(8, Color.Magenta));
+            AddGraphic(Image.CreateCircle(16, Color.Magenta));
             Graphic.CenterOrigin();
 
-            Crosshair = Image.CreateCircle(2, Color.Red);
+            Crosshair = Image.CreateCircle(4, Color.Red);
             Crosshair.CenterOrigin();
         }
 
@@ -87,11 +87,11 @@ namespace Thaum.Entities
 
             if(myMovement.AllowControl)
             {
-                if (Game.Session("Player1").GetController<ControllerXbox360>().A.Pressed)
+                if (Game.Session("Player1").GetController<ControllerXbox360>().A.Pressed && myMovement.Stable)
                 {
                     JumpCharge = SMALL_JUMP;
                 }
-                else if (Game.Session("Player1").GetController<ControllerXbox360>().A.Down)
+                else if (Game.Session("Player1").GetController<ControllerXbox360>().A.Down && myMovement.Stable)
                 {
                     //Charge jump
                     JumpCharge += 25;
@@ -100,7 +100,7 @@ namespace Thaum.Entities
                         JumpCharge = MAX_JUMP;
                     }
                 }
-                if (Game.Session("Player1").GetController<ControllerXbox360>().A.Released)
+                if (Game.Session("Player1").GetController<ControllerXbox360>().A.Released && myMovement.Stable)
                 {
                     Jump();
                 }

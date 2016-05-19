@@ -9,7 +9,7 @@ using Otter;
 //----------------
 // Author: J. Brown (DrMelon)
 // Part of the [Thaum] Project.
-// Date: 09/03/2016
+// Date: 09/05/2016
 //----------------
 // Purpose: Projectiles are the meat and potatoes of any artillery-strategy game.
 //  All spells/weapons will launch projectile-based attacks, with sub-classes handling any specifics.

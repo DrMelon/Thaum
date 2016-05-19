@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 //----------------
 // Author: J. Brown (DrMelon)
 // Part of the [Thaum] Project.
-// Date: 09/03/2016
+// Date: 09/05/2016
 //----------------
 // Purpose: Turn-based artillery worms-style battle.
 
@@ -39,6 +39,8 @@ namespace Thaum.Scenes
         Entity CamTarget;
         Entity FollowTarget;
         Entity NextFollowTarget;
+
+        public static float TimeScale = 1.0f;
 
         public BattleScene()
         {
