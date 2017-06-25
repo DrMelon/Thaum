@@ -56,6 +56,9 @@ namespace Thaum.Entities
 
             mySpritemap.Add("idle", new Anim(new int[] { 0 }, new float[] { 6f }));
             mySpritemap.Add("firing", new Anim(new int[] { 1 }, new float[] { 6f }));
+            mySpritemap.Add("crouching", new Anim(new int[] { 2 }, new float[] { 6f }));
+            mySpritemap.Add("jump", new Anim(new int[] { 3 }, new float[] { 6f }));
+            mySpritemap.Add("fall", new Anim(new int[] { 4 }, new float[] { 6f }));
             mySpritemap.Play("idle");
 
             AddGraphic(mySpritemap);
@@ -201,10 +204,22 @@ namespace Thaum.Entities
 
                 mySpritemap.Play("firing", false);
             }
+            else if(JumpCharge > 1)
+            {
+                mySpritemap.Play("crouching", false);
+
+            }
+            else if(myMovement.Stable == false && myMovement.PhysVeloc.Y < 0)
+            {
+                mySpritemap.Play("jump", false);
+            }
+            else if (myMovement.Stable == false && myMovement.PhysVeloc.Y > 0)
+            {
+                mySpritemap.Play("fall", false);
+            }
             else
             {
                 mySpritemap.Play("idle", false);
-
             }
 
         }
