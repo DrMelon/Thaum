@@ -59,7 +59,11 @@ namespace Thaum.Entities
         public int AniStyle;
         public int NumSpawns;
         public string ToSpawn;
+        public bool FixedRotAngs;
+        public int FixedRotSnap;
+        public float SpinXVelocityFactor;
 
+        public float VisAngle = 0;
 
         float CurrentTimer;
         Entities.PixelTerrain TheTerrain;
@@ -220,6 +224,11 @@ namespace Thaum.Entities
                                     RotStyle = (int)RotationStyle.SpinXVelocity;
                                 }
                             }
+                            if(spritenode.Name == "fixed_rotation")
+                            {
+                                FixedRotAngs = true;
+                                FixedRotSnap = spritenode.InnerInt();
+                            }
                             if (spritenode.Name == "anim_style")
                             {
                                 if (spritenode.InnerText == "Static")
@@ -300,6 +309,10 @@ namespace Thaum.Entities
                     {
                         Bias = childnode.InnerFloat();
                     }
+                    if (childnode.Name == "spinxvelocity_factor")
+                    {
+                        SpinXVelocityFactor = childnode.InnerFloat();
+                    }
                 }
             }
 
@@ -337,13 +350,13 @@ namespace Thaum.Entities
             if (RotStyle == (int)RotationStyle.RotateToFace)
             {
                 Components.PlayerMovement myMovement = GetComponent<Components.PlayerMovement>();
-                Graphic.Angle = (Util.RAD_TO_DEG * (float)Math.Atan2(-myMovement.PhysVeloc.Y, myMovement.PhysVeloc.X));
+                VisAngle = (Util.RAD_TO_DEG * (float)Math.Atan2(-myMovement.PhysVeloc.Y, myMovement.PhysVeloc.X));
             }
             if (RotStyle == (int)RotationStyle.SpinXVelocity)
             {
                 Components.PlayerMovement myMovement = GetComponent<Components.PlayerMovement>();
                 Graphic.Smooth = true;
-                Graphic.Angle -= (float)myMovement.PhysVeloc.X / 10.0f;
+                VisAngle -= (float)myMovement.PhysVeloc.X / SpinXVelocityFactor;
             }
             if (AniStyle == (int)AnimStyle.Frames)
             {
@@ -357,7 +370,18 @@ namespace Thaum.Entities
                 mySprite.Play(false);
                 mySprite.Speed = myMovement.PhysVeloc.X / myMovement.PhysVeloc.MaxX;
             }
+
+            if(FixedRotAngs)
+            {
+                Graphic.Angle = FixedRotSnap * (float)Math.Round(VisAngle / FixedRotSnap);
+            }
+            else
+            {
+                Graphic.Angle = VisAngle;
+            }
         }
+
+        
 
 
         public void Launch(Vector2 launchVector)
@@ -396,6 +420,17 @@ namespace Thaum.Entities
 
             // get rid of self!
             RemoveSelf();
+        }
+
+        public override void Render()
+        {
+            base.Render();
+
+            if(Type == (int)ExplosionType.Timed)
+            {
+                Draw.Rectangle(X - 8, Y - 24, 16, 16, Color.Grey, Color.White, 1);
+                Draw.Text(((int)CurrentTimer).ToString(), 16, X-6, Y-26);
+            }
         }
 
     }

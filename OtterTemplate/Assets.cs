@@ -27,7 +27,7 @@ namespace Thaum
         public static string FNT_NOODLE = ASSET_BASE_PATH + "Font/big_noodle_titling_oblique.ttf";
 
         // Game
-        public static string GFX_TERRAIN = ASSET_BASE_PATH + "Graphics/map/boats.png";
+        public static string GFX_TERRAIN = ASSET_BASE_PATH + "Graphics/map/terrain2.png";
         public static string GFX_PARTICLE_EXPLODE1 = ASSET_BASE_PATH + "Graphics/explode.png";
         public static string GFX_BALL = ASSET_BASE_PATH + "Graphics/ball.png";
         public static string GFX_WATER = ASSET_BASE_PATH + "Graphics/water.png";

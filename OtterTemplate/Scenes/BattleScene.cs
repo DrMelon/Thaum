@@ -77,6 +77,7 @@ namespace Thaum.Scenes
         public void SetupSky()
         {
             Sky = new Entity(0, TheTerrain.Graphic.Height + 100, new Image(Assets.GFX_SKY));
+            Sky.Graphic.ScaleX = 1080;
             Sky.Graphic.OriginY = Sky.Graphic.Height;
             Sky.Graphic.RepeatX = true;
             Sky.Layer = 100;

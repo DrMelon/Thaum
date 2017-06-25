@@ -35,6 +35,7 @@ namespace Thaum.Entities
         public float FireCharge;
         public bool IsFiring;
         public float Refire;
+        public Spritemap<string> mySpritemap;
 
         Image Crosshair;
 
@@ -51,7 +52,13 @@ namespace Thaum.Entities
             AddComponent(myMovement);
 
             // Add GFX
-            AddGraphic(new Image(Assets.GFX_WIZ));
+            mySpritemap = new Spritemap<string>(Assets.GFX_WIZ, 16, 16);
+
+            mySpritemap.Add("idle", new Anim(new int[] { 0 }, new float[] { 6f }));
+            mySpritemap.Add("firing", new Anim(new int[] { 1 }, new float[] { 6f }));
+            mySpritemap.Play("idle");
+
+            AddGraphic(mySpritemap);
             Graphic.CenterOrigin();
 
             Crosshair = Image.CreateCircle(4, Color.Red);
@@ -109,7 +116,7 @@ namespace Thaum.Entities
                 {
                     IsFiring = true;
                     FireCharge = SMALL_FIRE;
-
+                    
                 }
                 else if(Game.Session("Player1").GetController<ControllerXbox360>().X.Down)
                 {
@@ -191,6 +198,13 @@ namespace Thaum.Entities
             {
                 // Show charge
                 Draw.RoundedLine(X, Y, Util.Lerp(X, Crosshair.X, FireCharge/MAX_FIRE), Util.Lerp(Y, Crosshair.Y, FireCharge / MAX_FIRE), new Color(1.0f - FireCharge / MAX_FIRE, FireCharge / MAX_FIRE, 0.0f, 1.0f), 2);
+
+                mySpritemap.Play("firing", false);
+            }
+            else
+            {
+                mySpritemap.Play("idle", false);
+
             }
 
         }
