@@ -1,0 +1,13 @@
+Thaum Todo
+
++ Implement circle-cast for more stable bitmask collisions //kinda done? badly?
++ Implement displacable earth pixels
++ Add notion of more than one playable actor, turn-based system
++ Add notion of teams  
++ Add team/unit health system & basic match state machine 
++ Add 2D perlin map generation
++ Add 2D map texturing 
++ Add notion of spell schools & archetypes
++ Add notion of spell cast types affecting spell behaviours
++ Add notion of spell school/element/archetype interactions 
++ Add notion of "fuzzy" casting of spell components 

@@ -68,6 +68,8 @@ namespace Thaum.Entities
         float CurrentTimer;
         Entities.PixelTerrain TheTerrain;
 
+        public PlayerUnit Instigator;
+
         // Load from XML/JSON
         public Projectile(string XMLFile, Entities.PixelTerrain terrain)
         {

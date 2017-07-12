@@ -36,6 +36,18 @@ namespace Thaum.Entities
         public bool IsFiring;
         public float Refire;
         public Spritemap<string> mySpritemap;
+        public bool MyTurn;
+        public int TeamAffiliation;
+
+        public enum ControlType
+        {
+            LOCAL,
+            REMOTE,
+            AI,
+            NONE
+        }
+
+        public ControlType myControlType;
 
         Image Crosshair;
 
@@ -46,7 +58,7 @@ namespace Thaum.Entities
             Y = y;
             Health = 100;
             AimAngle = 45;
-            Name = "Unnamed Wizard";
+            Name = "Rincewind";
             myMovement = new PlayerMovement(terrain, 8);
             myMovement.AllowControl = true;
             AddComponent(myMovement);
@@ -95,8 +107,23 @@ namespace Thaum.Entities
             }
             
 
-            if(myMovement.AllowControl)
+            if(myMovement.AllowControl && MyTurn && myControlType == ControlType.LOCAL)
             {
+                if (Scene.Game.Session("Player1").GetController<ControllerXbox360>().DPad.X > 0)
+                {
+                    myMovement.WalkSpeed.X = 50;
+                    myMovement.Facing = 1;
+                }
+                if (Scene.Game.Session("Player1").GetController<ControllerXbox360>().DPad.X < 0)
+                {
+                    myMovement.WalkSpeed.X = -50;
+                    myMovement.Facing = -1;
+                }
+                if (Scene.Game.Session("Player1").GetController<ControllerXbox360>().DPad.X == 0)
+                {
+                    myMovement.WalkSpeed.X = 0;
+                    myMovement.WalkSpeed.Y = 0;
+                }
                 if (Game.Session("Player1").GetController<ControllerXbox360>().A.Pressed && myMovement.Stable)
                 {
                     JumpCharge = SMALL_JUMP;
@@ -142,6 +169,7 @@ namespace Thaum.Entities
                     Entities.Projectile newProjectile = new Entities.Projectile(Assets.PROJ_TEST, myMovement.TheTerrain);
                     newProjectile.X = X;
                     newProjectile.Y = Y;
+                    newProjectile.Instigator = this;
                     Vector2 LaunchVector = new Vector2();
 
                     LaunchVector.X = (float)Math.Cos(AimAngle * (Math.PI / 180.0f)) * myMovement.Facing;
@@ -153,6 +181,8 @@ namespace Thaum.Entities
                     FireCharge = 0;
                     Refire = 2.0f;
                     Game.Session("Player1").GetController<ControllerXbox360>().X.ReleaseState();
+
+                    // Start retreat time
                 }
 
                 if(Game.Session("Player1").GetController<ControllerXbox360>().DPad.Y < -0.2)

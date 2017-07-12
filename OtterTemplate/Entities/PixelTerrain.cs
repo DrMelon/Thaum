@@ -220,5 +220,119 @@ namespace Thaum.Entities
             return new Vector4(-1,-1,-1,-1);
         }
 
+        // Circle-Cast based on above func
+        public Vector4 GenericBresenhamCircleCast(Vector2 StartPos, Vector2 EndPos, float CircleRadius)
+        {
+            // Result
+            Vector4 result = new Vector4();
+
+            // Get Direction Vector
+            Vector2 DirectionVec = EndPos - StartPos;
+            DirectionVec.X = Math.Abs(DirectionVec.X);
+            DirectionVec.Y = Math.Abs(DirectionVec.Y);
+
+            // Incremental values, for step direction.
+            Vector2 Incremental1 = new Vector2();
+            Vector2 Incremental2 = new Vector2();
+
+            if (EndPos.X >= StartPos.X)
+            {
+                // X is increasing
+                Incremental1.X = 1;
+                Incremental2.X = 1;
+            }
+            else
+            {
+                // Decreasing X
+                Incremental1.X = -1;
+                Incremental2.X = -1;
+            }
+            if (EndPos.Y >= StartPos.Y)
+            {
+                // Y is increasing
+                Incremental1.Y = 1;
+                Incremental2.Y = 1;
+            }
+            else
+            {
+                // Decreasing Y
+                Incremental1.Y = -1;
+                Incremental2.Y = -1;
+            }
+
+            // Take into account slope directions
+            float Denominator, Numerator, NumToAdd, NumPixels;
+
+            // This means there is at least one X for every Y
+            if (DirectionVec.X >= DirectionVec.Y)
+            {
+                // Nullify quadrant
+                Incremental1.X = 0;
+                Incremental2.Y = 0;
+
+                Denominator = DirectionVec.X;
+                Numerator = DirectionVec.X / 2.0f;
+                NumToAdd = DirectionVec.Y;
+                NumPixels = DirectionVec.X;
+            }
+            else // Vice-versa
+            {
+                // Nullify quadrant
+                Incremental2.X = 0;
+                Incremental1.Y = 0;
+
+                Denominator = DirectionVec.Y;
+                Numerator = DirectionVec.Y / 2.0f;
+                NumToAdd = DirectionVec.X;
+                NumPixels = DirectionVec.Y;
+            }
+
+            // Set previous position to start position
+            Vector2 PrevPos = StartPos;
+            int CheckX = (int)StartPos.X;
+            int CheckY = (int)StartPos.Y;
+
+
+            // Now iterating over the line
+            for (int CurrentPixel = 0; CurrentPixel <= NumPixels; CurrentPixel++)
+            {
+                for(int i = 0; i < 360; i += 15)
+                {
+                    if (TerrainTexture.GetPixel(CheckX + (int)(Math.Sin(i)*CircleRadius), CheckY + (int)(Math.Cos(i) * CircleRadius)).A > 0)
+                    {
+                        result.X = PrevPos.X;
+                        result.Y = PrevPos.Y;
+                        result.Z = CheckX;
+                        result.W = CheckY;
+                        return result;
+                    }
+                }
+
+                
+
+                PrevPos.X = CheckX;
+                PrevPos.Y = CheckY;
+
+                // Increase numerator
+                Numerator += NumToAdd;
+
+                // If we've exceeded the denominator, we can shift pixels by the incrementals.
+                if (Numerator >= Denominator)
+                {
+                    Numerator -= Denominator;
+                    CheckX += (int)Incremental1.X;
+                    CheckY += (int)Incremental1.Y;
+                }
+
+                CheckX += (int)Incremental2.X;
+                CheckY += (int)Incremental2.Y;
+
+            }
+
+
+
+            return new Vector4(-1, -1, -1, -1);
+        }
+
     }
 }

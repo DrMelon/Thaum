@@ -75,25 +75,6 @@ namespace Thaum.Components
         {
             base.Update();
 
-            if(AllowControl)
-            {
-                if(Scene.Game.Session("Player1").GetController<ControllerXbox360>().DPad.X > 0)
-                {
-                    WalkSpeed.X = 50;
-                    Facing = 1;
-                }
-                if (Scene.Game.Session("Player1").GetController<ControllerXbox360>().DPad.X < 0)
-                {
-                    WalkSpeed.X = -50;
-                    Facing = -1;
-                }
-                if (Scene.Game.Session("Player1").GetController<ControllerXbox360>().DPad.X == 0)
-                {
-                    WalkSpeed.X = 0;
-                    WalkSpeed.Y = 0;
-                }
-            }
-
             if(Stable)
             {
                 MovePixelTerrain();
@@ -265,7 +246,7 @@ namespace Thaum.Components
                     physVec *= Math.Max(PhysRadius + 1, PhysVeloc.Length / 100);
 
                     Vector4 rayResult = TheTerrain.GenericBresenhamRaycast(new Vector2(Entity.X, Entity.Y), new Vector2(Entity.X + physVec.X, Entity.Y + physVec.Y));
-                    Vector4 wallCheck = TheTerrain.GenericBresenhamRaycast(new Vector2(Entity.X - PhysRadius / 2, Entity.Y), new Vector2(Entity.X + PhysRadius / 2, Entity.Y));
+                    Vector4 wallCheck = TheTerrain.GenericBresenhamCircleCast(new Vector2(Entity.X - PhysRadius / 2, Entity.Y), new Vector2(Entity.X + PhysRadius / 2, Entity.Y), PhysRadius);
 
                     if (wallCheck.X > -1)
                     {

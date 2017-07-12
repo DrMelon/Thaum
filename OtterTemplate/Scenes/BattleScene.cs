@@ -40,6 +40,17 @@ namespace Thaum.Scenes
         Entity FollowTarget;
         Entity NextFollowTarget;
 
+        public enum SubState
+        {
+            MATCH_BEGIN,
+            PLAYER_TAKING_TURN,
+            SWITCHING_TURN,
+            CHECK_TEAM_STATUSES,
+            MID_TURN_EVENT,
+            MATCH_END
+        }
+
+
         public static float TimeScale = 1.0f;
 
         public BattleScene()
@@ -52,6 +63,8 @@ namespace Thaum.Scenes
 
             AllUnits = new List<Entities.PlayerUnit>();
             ActivePlayer = new Entities.PlayerUnit(200, 50, TheTerrain);
+            ActivePlayer.MyTurn = true;
+            ActivePlayer.TeamAffiliation = 0;
             Add(ActivePlayer);
             AllUnits.Add(ActivePlayer);
             // Make other units
