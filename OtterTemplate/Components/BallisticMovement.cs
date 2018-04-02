@@ -153,6 +153,7 @@ namespace Thaum.Components
 
         public void SpawnDot(float sX, float sY, float sSize, float sTime, Color sCol, String sText)
         {
+            return;
             Entity dot = new Entity(sX, sY, Image.CreateCircle((int)sSize, sCol));
             dot.Graphic.CenterOrigin();
             dot.LifeSpan = sTime;
@@ -166,6 +167,7 @@ namespace Thaum.Components
 
         public void DrawDebugStuff()
         {
+            return;
             Draw.Circle(Entity.X - (PhysRadius), Entity.Y - (PhysRadius), PhysRadius, Color.None, Color.Cyan, 1);
 
             Vector2 physVec = new Vector2(PhysVeloc.X, PhysVeloc.Y);
@@ -379,14 +381,14 @@ namespace Thaum.Components
                     if (wallCheckB.X != -1 && !Stable)
                     {
 
-                        if (wallCheckB.Z < Entity.X)
+                        if (wallCheckB.X < Entity.X)
                         {
-                            Entity.X = wallCheckB.Z + PhysRadius;
+                            Entity.X = wallCheckB.X + PhysRadius;
                             SpawnDot(wallCheckB.Z, wallCheckB.W, 2, 3.0f * 60.0f, Color.Cyan, "PIP");
                         }
-                        if (wallCheckB.Z > Entity.X)
+                        if (wallCheckB.X > Entity.X)
                         {
-                            Entity.X = wallCheckB.Z - PhysRadius;
+                            Entity.X = wallCheckB.X - PhysRadius;
                             SpawnDot(wallCheckB.Z, wallCheckB.W, 2, 3.0f * 60.0f, Color.Yellow, "PAP");
                         }
 
