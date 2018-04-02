@@ -30,7 +30,7 @@ namespace Thaum.Entities
         public int Health;
         public int HealthDelta;
         public int AimAngle;
-        public PlayerMovement myMovement;
+        public BallisticMovement myMovement;
         public float JumpCharge;
         public float FireCharge;
         public bool IsFiring;
@@ -59,7 +59,7 @@ namespace Thaum.Entities
             Health = 100;
             AimAngle = 45;
             Name = "Rincewind";
-            myMovement = new PlayerMovement(terrain, 8);
+            myMovement = new BallisticMovement(terrain, 6);
             myMovement.AllowControl = true;
             AddComponent(myMovement);
 

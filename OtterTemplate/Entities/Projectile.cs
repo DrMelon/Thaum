@@ -107,8 +107,8 @@ namespace Thaum.Entities
 
             AddGraphic(new Image(GFXString));
             Graphic.CenterOrigin();
-            AddComponent(new Components.PlayerMovement(TheTerrain, (int)PhysRadius));
-            Components.PlayerMovement myMovement = GetComponent<Components.PlayerMovement>();
+            AddComponent(new Components.BallisticMovement(TheTerrain, (int)PhysRadius));
+            Components.BallisticMovement myMovement = GetComponent<Components.BallisticMovement>();
             myMovement.PhysFriction = Friction;
             myMovement.PhysBounce = Bounciness;
         }
@@ -320,8 +320,8 @@ namespace Thaum.Entities
 
 
 
-            AddComponent(new Components.PlayerMovement(TheTerrain, (int)PhysRadius));
-            Components.PlayerMovement myMovement = GetComponent<Components.PlayerMovement>();
+            AddComponent(new Components.BallisticMovement(TheTerrain, (int)PhysRadius));
+            Components.BallisticMovement myMovement = GetComponent<Components.BallisticMovement>();
             myMovement.PhysFriction = Friction;
             myMovement.PhysBounce = Bounciness;
             CurrentTimer = FuseLength;
@@ -351,12 +351,12 @@ namespace Thaum.Entities
             }
             if (RotStyle == (int)RotationStyle.RotateToFace)
             {
-                Components.PlayerMovement myMovement = GetComponent<Components.PlayerMovement>();
+                Components.BallisticMovement myMovement = GetComponent<Components.BallisticMovement>();
                 VisAngle = (Util.RAD_TO_DEG * (float)Math.Atan2(-myMovement.PhysVeloc.Y, myMovement.PhysVeloc.X));
             }
             if (RotStyle == (int)RotationStyle.SpinXVelocity)
             {
-                Components.PlayerMovement myMovement = GetComponent<Components.PlayerMovement>();
+                Components.BallisticMovement myMovement = GetComponent<Components.BallisticMovement>();
                 Graphic.Smooth = true;
                 VisAngle -= (float)myMovement.PhysVeloc.X / SpinXVelocityFactor;
             }
@@ -367,7 +367,7 @@ namespace Thaum.Entities
             }
             if (AniStyle == (int)AnimStyle.FrameOnVelocity)
             {
-                Components.PlayerMovement myMovement = GetComponent<Components.PlayerMovement>();
+                Components.BallisticMovement myMovement = GetComponent<Components.BallisticMovement>();
                 Spritemap<string> mySprite = GetGraphic<Spritemap<string>>();
                 mySprite.Play(false);
                 mySprite.Speed = myMovement.PhysVeloc.X / myMovement.PhysVeloc.MaxX;
@@ -389,7 +389,7 @@ namespace Thaum.Entities
         public void Launch(Vector2 launchVector)
         {
             // Hurls the projectile
-            Components.PlayerMovement myMovement = GetComponent<Components.PlayerMovement>();
+            Components.BallisticMovement myMovement = GetComponent<Components.BallisticMovement>();
             myMovement.Stable = false;
             myMovement.PhysVeloc.X = launchVector.X;
             myMovement.PhysVeloc.Y = launchVector.Y;

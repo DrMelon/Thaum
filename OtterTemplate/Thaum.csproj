@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets.cs" />
-    <Compile Include="Components\PlayerMovement.cs" />
+    <Compile Include="Components\BallisticMovement.cs" />
     <Compile Include="Entities\CameraShaker.cs" />
     <Compile Include="Entities\Explosion.cs" />
     <Compile Include="Entities\PixelTerrain.cs" />
@@ -61,7 +61,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Otter\Otter\Otter.csproj">
       <Project>{236485c2-a7ba-4dcd-808a-b3a634764402}</Project>

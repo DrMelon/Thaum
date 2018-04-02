@@ -13,7 +13,7 @@ namespace Thaum.RK4
         public Vector2 Velocity;
         public Vector2 Acceleration;
 
-        public static Derivative Evaluate(State initial, float t, float dt, PlayerMovement myMovement, Derivative derivative)
+        public static Derivative Evaluate(State initial, float t, float dt, BallisticMovement myMovement, Derivative derivative)
         {
             State newstate = new State();
             newstate.Position = initial.Position + derivative.Velocity * dt;
@@ -21,7 +21,8 @@ namespace Thaum.RK4
 
             Derivative output = new Derivative();
             output.Velocity = newstate.Velocity;
-            output.Acceleration = PlayerMovement.Acceleration(newstate, myMovement, dt);
+            output.Acceleration = BallisticMovement.Acceleration(newstate, myMovement, dt);
+
             return output;
         }
     }

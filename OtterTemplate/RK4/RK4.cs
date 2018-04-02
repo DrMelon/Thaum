@@ -16,7 +16,7 @@ namespace Thaum.RK4
 {
     class RK4
     {
-        public static void IntegrateStep(ref State state, float t, float dt, Components.PlayerMovement myMovement)
+        public static void IntegrateStep(ref State state, float t, float dt, Components.BallisticMovement myMovement)
         {
             Derivative a, b, c, d;
             a = new Derivative();
@@ -26,7 +26,7 @@ namespace Thaum.RK4
 
             // 4 derivs
             a = Derivative.Evaluate(state, t, 0.0f, myMovement, new Derivative());
-            b = Derivative.Evaluate(state, t, dt * 0.5f, myMovement, a);
+            b = Derivative.Evaluate(state, t, dt * 0.25f, myMovement, a);
             c = Derivative.Evaluate(state, t, dt * 0.5f, myMovement, b);
             d = Derivative.Evaluate(state, t, dt, myMovement, c);
 

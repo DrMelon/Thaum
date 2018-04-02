@@ -78,7 +78,7 @@ namespace Thaum.Entities
 
                 if ((ExplosionVector).Length <= Radius)
                 {
-                    Components.PlayerMovement plyMove = ply.GetComponent<Components.PlayerMovement>();
+                    Components.BallisticMovement plyMove = ply.GetComponent<Components.BallisticMovement>();
                     if (plyMove.Stable)
                     {
                         plyMove.Stable = false;
@@ -120,7 +120,7 @@ namespace Thaum.Entities
 
                 if ((myPos - projPos).Length <= Radius)
                 {
-                    Components.PlayerMovement projMove = proj.GetComponent<Components.PlayerMovement>();
+                    Components.BallisticMovement projMove = proj.GetComponent<Components.BallisticMovement>();
                     if(projMove.Stable)
                     {
                         projMove.Stable = false;

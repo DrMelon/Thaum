@@ -296,7 +296,7 @@ namespace Thaum.Entities
             // Now iterating over the line
             for (int CurrentPixel = 0; CurrentPixel <= NumPixels; CurrentPixel++)
             {
-                for(int i = 0; i < 360; i += 15)
+                for(int i = 0; i < 360; i += 5)
                 {
                     if (TerrainTexture.GetPixel(CheckX + (int)(Math.Sin(i)*CircleRadius), CheckY + (int)(Math.Cos(i) * CircleRadius)).A > 0)
                     {

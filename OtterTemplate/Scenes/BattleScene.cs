@@ -195,6 +195,12 @@ namespace Thaum.Scenes
             // Reset all xml defined objs.
             Assets.LoadedProjectiles.Clear();
         }
+
+        [OtterCommand(helpText: "Set deltatime modifier.", group: "game")]
+        public static void SetDeltaTimeModifier(float mod = 1.0f)
+        {
+            TimeScale = mod;
+        }
        
 
         public override void Update()
@@ -249,7 +255,7 @@ namespace Thaum.Scenes
 
             foreach (Entities.PlayerUnit proj in AllUnits)
             {
-                if ((proj.GetComponent<Components.PlayerMovement>().Stable == false && proj.GetComponent<Components.PlayerMovement>().PhysVeloc.Length > 150) || (proj.GetComponent<Components.PlayerMovement>().WalkSpeed.Length > 0))
+                if ((proj.GetComponent<Components.BallisticMovement>().Stable == false && proj.GetComponent<Components.BallisticMovement>().PhysVeloc.Length > 150) || (proj.GetComponent<Components.BallisticMovement>().WalkSpeed.Length > 0))
                 {
                     somethingMoving = true;
                     movingThing = proj;
