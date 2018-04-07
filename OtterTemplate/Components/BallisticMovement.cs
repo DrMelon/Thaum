@@ -28,9 +28,11 @@ namespace Thaum.Components
         public float PhysFriction;
         public int Facing;
         public bool Underwater = false;
+        public bool RespondsToExplosiveForces = false;
 
         public Entities.PixelTerrain TheTerrain;
-        
+
+        public Action<Vector2, Vector2, Vector2> BounceCallback;
         
         public BallisticMovement(Entities.PixelTerrain terrain, int physradius)
         {
@@ -151,6 +153,11 @@ namespace Thaum.Components
 
         }
 
+        public void RegisterOnBounceCallback(Action<Vector2, Vector2, Vector2> callback)
+        {
+            BounceCallback += callback;
+        }
+
         public void SpawnDot(float sX, float sY, float sSize, float sTime, Color sCol, String sText)
         {
             return;
@@ -194,6 +201,19 @@ namespace Thaum.Components
         {
             base.Render();
             DrawDebugStuff();
+        }
+
+        public void AttemptHomingBehaviour(bool smart, float TargetX, float TargetY)
+        {
+            // Get vector to target
+            PhysAccel.Y = 0;
+            Vector2 vecToTarget = (new Vector2(TargetX, TargetY)) - (new Vector2(Entity.X, Entity.Y));
+            // Normalize
+            Vector2 normToTarget = vecToTarget.Normalized();
+
+            // Apply thrust
+            PhysVeloc.X += normToTarget.X * 100;
+            PhysVeloc.Y += normToTarget.Y * 100;
         }
 
         public void MovePixelTerrain()
@@ -294,10 +314,13 @@ namespace Thaum.Components
                         Vector2 SurfaceTangent = new Vector2(-SurfaceNormal.Y, -SurfaceNormal.X);
                         SurfaceTangent.Normalize();
                         Vector2 NewVeloc = new Vector2(PhysVeloc.X, PhysVeloc.Y);
-
-                       
-
                         SurfaceNormal.Normalize();
+
+
+                        // We bounce! Make sure any parent stuff knows about this.
+                        BounceCallback?.Invoke(new Vector2(rayResult.X, rayResult.Y), new Vector2(PhysVeloc.X, PhysVeloc.Y), new Vector2(SurfaceNormal.X, SurfaceNormal.Y));
+
+                        
 
                         // Reflect r = d - 2(d . n)n
                         
@@ -324,29 +347,6 @@ namespace Thaum.Components
 
                         PhysVeloc.X -= (SurfaceTangent.X * PhysVeloc.X) * (1.0f - PhysFriction);
                         PhysVeloc.Y -= (SurfaceTangent.Y * PhysVeloc.Y) * (1.0f - PhysFriction);
-
-                        // Check to see if the parent entity is a projectile. If so, take away the number of remaining bounces & flag for instant death.
-                        if(Entity.GetType() == Type.GetType("Thaum.Entities.Projectile"))
-                        {
-                            Entities.Projectile myProjectile = (Entities.Projectile)Entity;
-
-                            if(myProjectile.Type == (int)Entities.Projectile.ExplosionType.Bounces)
-                            {
-                                myProjectile.MaxBounces--;
-                                if(myProjectile.MaxBounces < 0)
-                                {
-                                    myProjectile.Detonate();
-                                }
-                            }
-
-                            if(myProjectile.Type == (int)Entities.Projectile.ExplosionType.Instant)
-                            {
-                                myProjectile.Detonate();
-                            }
-                            
-                            
-
-                        }
 
 
                         // If velocity is too low, they are standing.

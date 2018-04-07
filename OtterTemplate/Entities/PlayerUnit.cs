@@ -176,6 +176,9 @@ namespace Thaum.Entities
                     LaunchVector.Y = -(float)Math.Sin(AimAngle * (Math.PI / 180.0f));
 
                     newProjectile.Launch(LaunchVector * FireCharge);
+
+                    newProjectile.SetTarget(new Vector2(X, Y));
+
                     Scene.Add(newProjectile);
                     IsFiring = false;
                     FireCharge = 0;

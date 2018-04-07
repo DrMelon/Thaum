@@ -34,6 +34,9 @@ namespace Thaum.Entities
 {
     class Projectile : Entity
     {
+        public float HomingDelay = 0.60f;
+
+
         public enum ExplosionType { Timed, Bounces, Instant, AtRest };
         public enum ExplosionEffect { Normal, Spawn };
         public enum HomingType { None, Dumb, Smart };
@@ -62,13 +65,26 @@ namespace Thaum.Entities
         public bool FixedRotAngs;
         public int FixedRotSnap;
         public float SpinXVelocityFactor;
+        public float SpawnMaxSpeed;
+        public float SpawnMinSpeed;
+        public float SpawnConeAngle;
+        public Vector2 LastSurfaceNormal = new Vector2(0, -1);
+
+        public float HomingTargetX;
+        public float HomingTargetY;
 
         public float VisAngle = 0;
+
+        public bool RespondsToExplosiveForces = false;
+
+        public bool Detonated = false;
 
         float CurrentTimer;
         Entities.PixelTerrain TheTerrain;
 
         public PlayerUnit Instigator;
+
+        public Components.BallisticMovement myMovement;
 
         // Load from XML/JSON
         public Projectile(string XMLFile, Entities.PixelTerrain terrain)
@@ -93,7 +109,7 @@ namespace Thaum.Entities
             WindAffect = 0.0f;
             Wobble = 0.0f;
             FuseLength = 3.0f;
-            MaxBounces = 1;
+            MaxBounces = 0;
             NumSpawns = 5;
             
             // create ents based on xml stuff
@@ -108,9 +124,10 @@ namespace Thaum.Entities
             AddGraphic(new Image(GFXString));
             Graphic.CenterOrigin();
             AddComponent(new Components.BallisticMovement(TheTerrain, (int)PhysRadius));
-            Components.BallisticMovement myMovement = GetComponent<Components.BallisticMovement>();
+            myMovement = GetComponent<Components.BallisticMovement>();
             myMovement.PhysFriction = Friction;
             myMovement.PhysBounce = Bounciness;
+            myMovement.RespondsToExplosiveForces = RespondsToExplosiveForces;
         }
 
         // Set projectile's settings from XML file.
@@ -196,7 +213,6 @@ namespace Thaum.Entities
                         string imgString = "";
                         foreach (XmlNode spritenode in childnode.ChildNodes)
                         {
-                            
                             int numFrames = 0;
                             int imgw = 1;
                             int imgh = 1;
@@ -315,18 +331,56 @@ namespace Thaum.Entities
                     {
                         SpinXVelocityFactor = childnode.InnerFloat();
                     }
+                    if (childnode.Name == "explosion_response")
+                    {
+                        if (childnode.InnerInt() > 0)
+                        {
+                            RespondsToExplosiveForces = true;
+                        }
+                    }
+                    if (childnode.Name == "spawn_minvelocity")
+                    {
+                        SpawnMinSpeed = childnode.InnerFloat();
+                    }
+                    if (childnode.Name == "spawn_maxvelocity")
+                    {
+                        SpawnMaxSpeed = childnode.InnerFloat();
+                    }
+                    if (childnode.Name == "spawn_coneangle")
+                    {
+                        SpawnConeAngle = childnode.InnerFloat();
+                    }
                 }
             }
 
-
-
-            AddComponent(new Components.BallisticMovement(TheTerrain, (int)PhysRadius));
-            Components.BallisticMovement myMovement = GetComponent<Components.BallisticMovement>();
+            // Create Ballistic Movement comp
+            myMovement = AddComponent(new Components.BallisticMovement(TheTerrain, (int)PhysRadius));
+            myMovement.RegisterOnBounceCallback(BounceCallback);
             myMovement.PhysFriction = Friction;
             myMovement.PhysBounce = Bounciness;
             CurrentTimer = FuseLength;
+        }
 
+        public void BounceCallback(Vector2 pos, Vector2 veloc, Vector2 surfaceNormal)
+        {
+            LastSurfaceNormal = surfaceNormal;
 
+            if (Type == (int)ExplosionType.Instant)
+            {
+                Detonate();
+            }
+
+            if(Type == (int)ExplosionType.Bounces)
+            {
+                MaxBounces--;
+
+                if(MaxBounces < 0)
+                {
+                    Detonate();
+                }
+            }
+
+            
         }
 
         public override void Update()
@@ -349,14 +403,41 @@ namespace Thaum.Entities
                     Detonate();
                 }
             }
+
+            // Check at-rest explosion
+            if(Type == (int)ExplosionType.AtRest)
+            {
+                if(myMovement.Stable)
+                {
+                    Detonate();
+                }
+            }
+
+            if(Homing != (int)HomingType.None)
+            {
+                if (HomingDelay > 0)
+                {
+                    if (Game.FixedFramerate)
+                    {
+                        HomingDelay -= 1.0f / Game.Framerate;
+                    }
+                    else
+                    {
+                        HomingDelay -= Game.DeltaTime;
+                    }
+                }
+                else
+                {
+                    myMovement.AttemptHomingBehaviour(Homing == (int)HomingType.Smart, HomingTargetX, HomingTargetY);
+                }
+            }
+
             if (RotStyle == (int)RotationStyle.RotateToFace)
             {
-                Components.BallisticMovement myMovement = GetComponent<Components.BallisticMovement>();
                 VisAngle = (Util.RAD_TO_DEG * (float)Math.Atan2(-myMovement.PhysVeloc.Y, myMovement.PhysVeloc.X));
             }
             if (RotStyle == (int)RotationStyle.SpinXVelocity)
             {
-                Components.BallisticMovement myMovement = GetComponent<Components.BallisticMovement>();
                 Graphic.Smooth = true;
                 VisAngle -= (float)myMovement.PhysVeloc.X / SpinXVelocityFactor;
             }
@@ -367,7 +448,7 @@ namespace Thaum.Entities
             }
             if (AniStyle == (int)AnimStyle.FrameOnVelocity)
             {
-                Components.BallisticMovement myMovement = GetComponent<Components.BallisticMovement>();
+                 
                 Spritemap<string> mySprite = GetGraphic<Spritemap<string>>();
                 mySprite.Play(false);
                 mySprite.Speed = myMovement.PhysVeloc.X / myMovement.PhysVeloc.MaxX;
@@ -384,19 +465,29 @@ namespace Thaum.Entities
         }
 
         
-
+        public void SetTarget(Vector2 target)
+        {
+            HomingTargetX = target.X;
+            HomingTargetY = target.Y;
+        }
 
         public void Launch(Vector2 launchVector)
         {
             // Hurls the projectile
-            Components.BallisticMovement myMovement = GetComponent<Components.BallisticMovement>();
+             
             myMovement.Stable = false;
             myMovement.PhysVeloc.X = launchVector.X;
             myMovement.PhysVeloc.Y = launchVector.Y;
         }
 
-        public void Detonate()
+        public void Detonate(bool force = false)
         {
+            if(Detonated && !force)
+            {
+                return;
+            }
+            Detonated = true;
+
             // Explode!!
             if(Effect == (int)ExplosionEffect.Normal)
             {
@@ -414,7 +505,22 @@ namespace Thaum.Entities
                     Projectile newProjectile = new Projectile(Assets.PROJECTILES_DEFINE_FOLDER + ToSpawn, TheTerrain);
                     newProjectile.X = X;
                     newProjectile.Y = Y;
-                    newProjectile.Launch(new Vector2(Rand.Float(-200, 200), Rand.Float(-400, -200)));
+
+                    Vector2 LaunchVector = new Vector2();
+                    float VectorRotateAngle = Rand.Float(-SpawnConeAngle, SpawnConeAngle);
+
+                    // rotate surface normal by random angle to get cone spread
+                    LaunchVector.X = (Util.Cos(VectorRotateAngle) * LastSurfaceNormal.X) - (Util.Sin(VectorRotateAngle) * LastSurfaceNormal.Y);
+                    LaunchVector.Y = (Util.Sin(VectorRotateAngle) * LastSurfaceNormal.X) + (Util.Cos(VectorRotateAngle) * LastSurfaceNormal.Y);
+
+                    // randomise speed
+                    LaunchVector *= Rand.Float(SpawnMinSpeed, SpawnMaxSpeed);
+
+                    newProjectile.HomingTargetX = HomingTargetX;
+                    newProjectile.HomingTargetY = HomingTargetY;
+
+                    // fire!
+                    newProjectile.Launch(LaunchVector);
                     Scene.Add(newProjectile);
                 }
             }

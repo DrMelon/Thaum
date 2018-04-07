@@ -1,7 +1,7 @@
 <projectile name="Test Cluster Projectile">
 	<explosion_type>Instant</explosion_type>
 	<explosion_effect>Normal</explosion_effect>
-	<homing_type>None</homing_type>
+	<homing_type>Smart</homing_type>
 	<sprite>
 		<image w="16" h="16">Graphics/Projectile/fireball.png</image>
 		<frames>1</frames>

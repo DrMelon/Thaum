@@ -275,7 +275,6 @@ namespace Thaum.Scenes
 
             if(FollowTarget != null)
             {
-
                 CamTarget.X = FollowTarget.X;
                 CamTarget.Y = FollowTarget.Y;
             }
@@ -301,13 +300,14 @@ namespace Thaum.Scenes
         {
             base.Render();
 
+            /*
             Draw.Rectangle(CamFocus.X - 5, CamFocus.Y - 5, 10, 10, Color.None, Color.Green, 1);
             Draw.Rectangle(CamTarget.X - 4, CamTarget.Y - 4, 8, 8, Color.None, Color.Red, 1);
             Draw.Rectangle(FollowTarget.X - 6, FollowTarget.Y - 6, 12, 12, Color.None, Color.Cyan, 1);
             if (NextFollowTarget != null)
             {
                 Draw.Rectangle(NextFollowTarget.X - 3, NextFollowTarget.Y - 3, 6, 6, Color.None, Color.Yellow, 1);
-            }
+            }*/
         }
     }
 }

@@ -1,7 +1,7 @@
 <projectile name="Test Projectile">
-	<explosion_type>Timed</explosion_type>
+	<explosion_type>Instant</explosion_type>
 	<explosion_effect projectile_to_spawn="cluster.xml">Spawn</explosion_effect>
-	<homing_type>None</homing_type>
+	<homing_type>Dumb</homing_type>
 	<sprite>
 		<image w="16" h="16">Graphics/Projectile/potion.png</image>
 		<frames>1</frames>
@@ -21,5 +21,9 @@
 	<explosion_yield>20.0</explosion_yield>
 	<explosion_force>40.0</explosion_force>
 	<explosion_damage>50.0</explosion_damage>
-	<explosion_bias>4.0</explosion_bias>	
+	<explosion_bias>4.0</explosion_bias>
+	<explosion_response>0</explosion_response>
+	<spawn_minvelocity>800.0</spawn_minvelocity>
+	<spawn_maxvelocity>1200.0</spawn_maxvelocity>
+	<spawn_coneangle>15.0</spawn_coneangle>
 </projectile>

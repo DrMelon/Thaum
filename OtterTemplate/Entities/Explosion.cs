@@ -109,31 +109,36 @@ namespace Thaum.Entities
             // radius check
             foreach (Projectile proj in projs)
             {
-                Vector2 projPos = new Vector2(proj.X, proj.Y);
-
-                Vector2 ExplosionVector = (projPos - myPos);
-
-                if(ExplosionVector.Length <= 2)
+                if (proj.RespondsToExplosiveForces)
                 {
-                    ExplosionVector.Length = 2; //prevent exponential explosions
-                }
+                    Vector2 projPos = new Vector2(proj.X, proj.Y);
 
-                if ((myPos - projPos).Length <= Radius)
-                {
-                    Components.BallisticMovement projMove = proj.GetComponent<Components.BallisticMovement>();
-                    if(projMove.Stable)
+                    Vector2 ExplosionVector = (projPos - myPos);
+
+                    if (ExplosionVector.Length <= 2)
                     {
-                        projMove.Stable = false;
-                        projMove.PhysVeloc.X = (ExplosionVector).Normalized().X * (1.0f / (ExplosionVector).Length) * Force * 100;
-                        projMove.PhysVeloc.Y = (ExplosionVector).Normalized().Y * (1.0f / (ExplosionVector).Length) * Force * 100;
+                        ExplosionVector.Length = 2; //prevent exponential explosions
                     }
-                    else
+
+                    if ((myPos - projPos).Length <= Radius)
                     {
-                        projMove.PhysVeloc.X += (ExplosionVector).Normalized().X * (1.0f / (ExplosionVector).Length) * Force * 100;
-                        projMove.PhysVeloc.Y += (ExplosionVector).Normalized().Y * (1.0f / (ExplosionVector).Length) * Force * 100;
+                        Components.BallisticMovement projMove = proj.GetComponent<Components.BallisticMovement>();
+                        if (projMove.RespondsToExplosiveForces)
+                        {
+                            if (projMove.Stable)
+                            {
+                                projMove.Stable = false;
+                                projMove.PhysVeloc.X = (ExplosionVector).Normalized().X * (1.0f / (ExplosionVector).Length) * Force * 100;
+                                projMove.PhysVeloc.Y = (ExplosionVector).Normalized().Y * (1.0f / (ExplosionVector).Length) * Force * 100;
+                            }
+                            else
+                            {
+                                projMove.PhysVeloc.X += (ExplosionVector).Normalized().X * (1.0f / (ExplosionVector).Length) * Force * 100;
+                                projMove.PhysVeloc.Y += (ExplosionVector).Normalized().Y * (1.0f / (ExplosionVector).Length) * Force * 100;
+                            }
+                        }
+
                     }
-                    
-                    
                 }
             }
 
