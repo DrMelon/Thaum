@@ -17,11 +17,12 @@ namespace Thaum.Scenes
 {
     class BattleScene : Scene
     {
+        public static BattleScene Instance;
         Entities.PixelTerrain TheTerrain;
         public Entities.CameraShaker CamShake;
 
-        Entities.PlayerUnit ActivePlayer;
-        List<Entities.PlayerUnit> AllUnits;
+        public Entities.PlayerUnit ActivePlayer;
+        public List<Entities.PlayerUnit> AllUnits;
 
         Entity WaterEnt;
         Entity WaterBeneath;
@@ -55,6 +56,7 @@ namespace Thaum.Scenes
 
         public BattleScene()
         {
+            Instance = this;
             TheTerrain = new Entities.PixelTerrain(Assets.GFX_TERRAIN);
             Add(TheTerrain);
 
@@ -189,11 +191,25 @@ namespace Thaum.Scenes
 
         }
 
-        [OtterCommand(helpText: "Reset XML-based objects.", group: "game")]
+        [OtterCommand(helpText: "Reset XML-based objects.", group: "debug")]
         public static void ResetXML()
         {
             // Reset all xml defined objs.
             Assets.LoadedProjectiles.Clear();
+        }
+
+        [OtterCommand(helpText: "Reset map.", group: "debug")]
+        public static void ResetMap()
+        {
+            Instance.TheTerrain.Reset();
+        }
+
+        [OtterCommand(helpText: "Load new map.", group: "debug")]
+        public static void LoadMap(string newMap, float x, float y)
+        {
+            Instance.TheTerrain.Reset(Assets.ASSET_BASE_PATH + "Graphics/map/" + newMap);
+            Instance.ActivePlayer.X = x;
+            Instance.ActivePlayer.Y = y;
         }
 
         [OtterCommand(helpText: "Set deltatime modifier.", group: "game")]

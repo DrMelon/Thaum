@@ -20,16 +20,35 @@ namespace Thaum.Entities
     {
         public Texture TerrainTexture;
         public Image TerrainDisplay;
+        public string terrainFilename;
         bool GFXDirty;
 
         public PixelTerrain(String filename)
         {
             // Load image.
-            TerrainTexture = new Texture(filename);
-            TerrainDisplay = new Image(filename);
+            terrainFilename = filename;
+            Reset();
+            GFXDirty = true;
+            Update();
+        }
+
+        public void Reset(string filename = "")
+        {
+            if(filename != "")
+            {
+                terrainFilename = filename;
+            }
+
+            if (Graphics.Contains(TerrainDisplay))
+            {
+                RemoveGraphic(TerrainDisplay);
+            }
+            TerrainTexture = new Texture(terrainFilename, false);
+            TerrainDisplay = new Image(terrainFilename);
             TerrainDisplay.SetTexture(TerrainTexture);
             AddGraphic(TerrainDisplay);
             GFXDirty = true;
+            Update();
         }
 
         public override void Update()
