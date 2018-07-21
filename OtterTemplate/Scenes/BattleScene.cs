@@ -52,7 +52,7 @@ namespace Thaum.Scenes
         }
 
 
-        public static float TimeScale = 1.0f;
+        public static float TimeScale = 1.0f / 60.0f;
 
         public BattleScene()
         {
@@ -215,7 +215,7 @@ namespace Thaum.Scenes
         [OtterCommand(helpText: "Set deltatime modifier.", group: "game")]
         public static void SetDeltaTimeModifier(float mod = 1.0f)
         {
-            TimeScale = mod;
+            TimeScale = mod / 60.0f;
         }
        
 

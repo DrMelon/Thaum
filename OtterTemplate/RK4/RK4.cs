@@ -18,6 +18,7 @@ namespace Thaum.RK4
     {
         public static void IntegrateStep(ref State state, float t, float dt, Components.BallisticMovement myMovement)
         {
+            // fix timestep
             Derivative a, b, c, d;
             a = new Derivative();
             b = new Derivative();
@@ -44,8 +45,8 @@ namespace Thaum.RK4
             state.Position = new Vector2(myMovement.Entity.X, myMovement.Entity.Y);
             state.Velocity = new Vector2(myMovement.PhysVeloc.X / 100, myMovement.PhysVeloc.Y / 100);
 
-            state.Position = state.Position + (VelocChange * dt);
-            state.Velocity = state.Velocity + (AccelChange * dt);
+            state.Position = state.Position + (VelocChange);// * dt);
+            state.Velocity = state.Velocity + (AccelChange);// * dt);
 
         }
     }
