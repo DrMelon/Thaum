@@ -216,6 +216,189 @@ namespace Thaum.Components
             PhysVeloc.Y += normToTarget.Y * 100;
         }
 
+        public static void MovePixelTerrain(ref BallisticMovement movement, ref RK4.State newstate)
+        {
+            // Test against pix terrain, using surf. normals & bresenham cast
+            if (movement.TheTerrain != null && movement.Entity != null)
+            {
+                // If in walk-mode, check for open air and shift to phys-mode.
+                if (movement.Stable)
+                {
+                    newstate.Velocity.Y = 0;
+                    newstate.Velocity.X = 0;
+
+                    // Prevent clipping through walls
+                    if (movement.WalkSpeed.X != 0)
+                    {
+                        Vector4 ray = movement.TheTerrain.GenericBresenhamRaycast(new Vector2(newstate.Position.X - movement.PhysRadius, newstate.Position.Y), new Vector2(newstate.Position.X + movement.PhysRadius, newstate.Position.Y));
+                        if (ray.X != -1)
+                        {
+                            Vector4 ray2 = movement.TheTerrain.GenericBresenhamRaycast(new Vector2(newstate.Position.X, newstate.Position.Y), new Vector2(newstate.Position.X, newstate.Position.Y + (movement.PhysRadius) + 1));
+                            if (ray2.X <= -1)
+                            {
+                                // Ah! We are fallin'.
+                                movement.Stable = false;
+                                //SpawnDot(ray2.Z, ray2.W, 2, 3.0f * 60.0f, Color.Magenta, "FALL");
+                            }
+                            if (ray.X < newstate.Position.X && movement.Stable)
+                            {
+                                newstate.Position.X = ray.X + (movement.PhysRadius);
+                                movement.SpawnDot(ray.X, ray.Y, 2, 3.0f * 60.0f, Color.Magenta, "RAYX < ENT X");
+                                if (movement.WalkSpeed.X < 0)
+                                {
+                                    movement.WalkSpeed.X = 0;
+                                }
+                            }
+                            if (ray.Z > newstate.Position.X && movement.Stable)
+                            {
+                                newstate.Position.X = ray.Z - (movement.PhysRadius);
+                                movement.SpawnDot(ray.X, ray.Y, 2, 3.0f * 60.0f, Color.Magenta, "RAYZ > ENT X");
+                                if (movement.WalkSpeed.X > 0)
+                                {
+                                    movement.WalkSpeed.X = 0;
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            Vector4 ray2 = movement.TheTerrain.GenericBresenhamRaycast(new Vector2(newstate.Position.X, newstate.Position.Y), new Vector2(newstate.Position.X, newstate.Position.Y + (movement.PhysRadius) + 1));
+                            if (ray2.X <= -1)
+                            {
+                                // Ah! We are fallin'.
+                                movement.Stable = false;
+                                //SpawnDot(Entity.X, Entity.Y, 2, 3.0f * 60.0f, Color.Cyan, "FALL");
+                            }
+                        }
+                    }
+
+                    // Generic Ground Check
+                    Vector4 rayResult = movement.TheTerrain.GenericBresenhamRaycast(new Vector2(newstate.Position.X, newstate.Position.Y), new Vector2(newstate.Position.X, newstate.Position.Y + (movement.PhysRadius) + 1));
+                    if (rayResult.X <= -1)
+                    {
+                        // Ah! We are fallin'.
+                        movement.Stable = false;
+                        //SpawnDot(Entity.X, Entity.Y, 2, 3.0f * 60.0f, Color.Yellow, "FALL");
+                    }
+                    else
+                    {
+                        // Stay on top of terrain
+                        newstate.Position.Y = rayResult.W - (movement.PhysRadius);
+                        // SpawnDot(rayResult.X, rayResult.Y, 2, 0.1f * 60.0f, Color.Yellow, "GROUNDLEVEL");
+                    }
+
+
+
+                }
+                else
+                {
+                    // If in phys-mode, check the terrain & do collision response based on speed etc.
+                    Vector2 physVec = new Vector2(newstate.Velocity.X, newstate.Velocity.Y);
+                    physVec.Normalize();
+
+                    physVec *= Math.Max((movement.PhysRadius) + 1, newstate.Velocity.Length / 100);
+
+                    Vector4 rayResult = movement.TheTerrain.GenericBresenhamRaycast(new Vector2(newstate.Position.X, newstate.Position.Y), new Vector2(newstate.Position.X + physVec.X, newstate.Position.Y + physVec.Y));
+
+
+
+
+                    if (rayResult.X != -1)
+                    {
+                        // Ray actually hit terrain!
+
+
+
+                        // Reflect velocity through surface normal
+                        Vector2 SurfaceNormal = movement.TheTerrain.GetSurfaceNormal(new Vector2(rayResult.X, rayResult.Y), 3);
+                        Vector2 SurfaceTangent = new Vector2(-SurfaceNormal.Y, -SurfaceNormal.X);
+                        SurfaceTangent.Normalize();
+                        Vector2 NewVeloc = new Vector2(newstate.Velocity.X, newstate.Velocity.Y);
+                        SurfaceNormal.Normalize();
+
+
+                        // We bounce! Make sure any parent stuff knows about this.
+                        movement.BounceCallback?.Invoke(new Vector2(rayResult.X, rayResult.Y), new Vector2(newstate.Velocity.X, newstate.Velocity.Y), new Vector2(SurfaceNormal.X, SurfaceNormal.Y));
+
+
+
+                        // Reflect r = d - 2(d . n)n
+
+                        NewVeloc = NewVeloc - 2 * Vector2.Dot(NewVeloc, SurfaceNormal) * SurfaceNormal;
+
+                        newstate.Velocity.X = (int)NewVeloc.X;
+                        newstate.Velocity.Y = (int)NewVeloc.Y;
+
+                        // Push-out of terrain
+
+                        // Must find min. axis of seperation.
+                        //Vector2 PopVec = new Vector2(newstate.Velocity.X, newstate.Velocity.Y);
+                        Vector2 PopVec = new Vector2(SurfaceNormal.X, SurfaceNormal.Y);
+                        PopVec.Normalize();
+                        PopVec *= (movement.PhysRadius) - (new Vector2(newstate.Position.X - rayResult.Z, newstate.Position.Y - rayResult.W).Length);
+                        movement.SpawnDot(rayResult.Z, rayResult.W, 2, 3.0f * 60.0f, Color.Magenta, "POP");
+
+                        newstate.Position.X += PopVec.X;
+                        newstate.Position.Y += PopVec.Y;
+
+                        // Mult Velocities by bounce amt
+                        newstate.Velocity.X *= movement.PhysBounce;
+                        newstate.Velocity.Y *= movement.PhysBounce;
+
+                        newstate.Velocity.X -= (SurfaceTangent.X * newstate.Velocity.X) * (1.0f - movement.PhysFriction);
+                        newstate.Velocity.Y -= (SurfaceTangent.Y * newstate.Velocity.Y) * (1.0f - movement.PhysFriction);
+
+
+                        // If velocity is too low, they are standing.
+                        if (Math.Abs(newstate.Velocity.Y) < 100 && Math.Abs(newstate.Velocity.X) < 100)
+                        {
+                            movement.Stable = true;
+
+                        }
+
+
+                    }
+
+                    // Wall seperation checker
+                    Vector4 wallCheckA = movement.TheTerrain.GenericBresenhamRaycast(new Vector2(newstate.Position.X, newstate.Position.Y), new Vector2(newstate.Position.X + movement.PhysRadius, newstate.Position.Y));
+                    Vector4 wallCheckB = movement.TheTerrain.GenericBresenhamRaycast(new Vector2(newstate.Position.X, newstate.Position.Y), new Vector2(newstate.Position.X - movement.PhysRadius, newstate.Position.Y));
+                    if (wallCheckA.X != -1 && !movement.Stable)
+                    {
+
+                        if (wallCheckA.Z < newstate.Position.X)
+                        {
+                            newstate.Position.X = wallCheckA.Z + movement.PhysRadius;
+                            movement.SpawnDot(wallCheckA.Z, wallCheckA.W, 2, 3.0f * 60.0f, Color.Cyan, "PIP");
+                        }
+                        if (wallCheckA.Z > newstate.Position.X)
+                        {
+                            newstate.Position.X = wallCheckA.Z - movement.PhysRadius;
+                            movement.SpawnDot(wallCheckA.Z, wallCheckA.W, 2, 3.0f * 60.0f, Color.Yellow, "PAP");
+                        }
+
+                    }
+
+                    if (wallCheckB.X != -1 && !movement.Stable)
+                    {
+
+                        if (wallCheckB.X < newstate.Position.X)
+                        {
+                            newstate.Position.X = wallCheckB.X + movement.PhysRadius;
+                            movement.SpawnDot(wallCheckB.Z, wallCheckB.W, 2, 3.0f * 60.0f, Color.Cyan, "PIP");
+                        }
+                        if (wallCheckB.X > newstate.Position.X)
+                        {
+                            newstate.Position.X = wallCheckB.X - movement.PhysRadius;
+                            movement.SpawnDot(wallCheckB.Z, wallCheckB.W, 2, 3.0f * 60.0f, Color.Yellow, "PAP");
+                        }
+
+                    }
+
+
+                }
+            }
+        }
+
         public void MovePixelTerrain()
         {
             // Test against pix terrain, using surf. normals & bresenham cast

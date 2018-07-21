@@ -40,7 +40,7 @@ namespace Thaum.RK4
             myMovement.PhysVeloc.X = state.Velocity.X * 100;
             myMovement.PhysVeloc.Y = state.Velocity.Y * 100;
 
-            myMovement.MovePixelTerrain();
+            //myMovement.MovePixelTerrain();
 
             state.Position = new Vector2(myMovement.Entity.X, myMovement.Entity.Y);
             state.Velocity = new Vector2(myMovement.PhysVeloc.X / 100, myMovement.PhysVeloc.Y / 100);

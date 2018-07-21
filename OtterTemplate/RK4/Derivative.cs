@@ -20,6 +20,9 @@ namespace Thaum.RK4
             newstate.Velocity = initial.Velocity + derivative.Acceleration * dt;
 
             Derivative output = new Derivative();
+
+            BallisticMovement.MovePixelTerrain(ref myMovement, ref newstate);
+
             output.Velocity = newstate.Velocity;
             output.Acceleration = BallisticMovement.Acceleration(newstate, myMovement, dt);
 
